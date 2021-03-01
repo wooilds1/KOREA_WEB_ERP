@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>8HOUR</title>
+	<style>
+        body > section > article > div > table > tbody > tr> th.myInfoLabel{
+            text-align: left;
+            font:unset;
+        }
+        #img{
+            width: 150px;
+            height:200px;
+            border: 1px solid;
+        }
+        body > div > table > tbody > td{
+            margin: 100px;
+        }
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script>
+	$(function() {
+		//DOM트리에서 메뉴객체들 모두찾기
+        var $EmployeeObj = $("body>div.myinfo>table>tr>td>input[type=text]");
+        var url="./myinfo";
+		var method ="get";
+		$.ajax({
+    		url: url,
+    		method:method,
+    		success: function(data){
+				console.log(data);
+				document.getElementById("email").value = data.email;
+				document.getElementById("hpPhone").value = data.hpPhone;
+				document.getElementById("birthday").value = data.birthday;
+				document.getElementById("address").value = data.address;
+				document.getElementById("employeeId").value = data.employeeId;
+				document.getElementById("position").value = data.position
+				document.getElementById("applyDays").value = data.applyDays;
+				document.getElementById("departmentName").value = data.departmentName;
+				document.getElementById("hireDate").value = data.hireDate;
+				document.getElementById("officeTel").value = data.officeTel;
+				$("#img").attr("src", "./image/"+data.employeeId+".jpg");
+				
+    		},
+    		error: function(jqXHR){//실패응답
+                alert("AJAX요청응답 실패 : 에러코드=" + jqXHR.status);
+            }
+    	});
+		//DOMTREE에서 submit 객체찾기
+        var $updateObj = $("body > section > article > div > table> tbody > tr> td> input[type=submit]");
+      	//수정버튼 클릭시 이벤트 발생
+        $updateObj.click(function(){ 
+        	var con_yn=confirm("수정하시겠습니까?"); 
+        	if(con_yn==false){
+        		alert("수정취소되었습니다");
+        		return false;
+        	}
+        	var $EmployeeUpdateObj = $("body>div.myinfo>table>tr>td>input[type=text]");
+        	var url="./myinfoupdate";
+			var method ="get";
+			var data = $('input').serialize();
+			$.ajax({
+	    		url: url,
+	    		method:method,
+	    		data: data,
+	    		success: function(data){
+	    			document.getElementById("email").value = data.email;
+	    			document.getElementById("hpPhone").value = data.hpPhone;
+					document.getElementById("address").value = data.address;
+	    			alert("수정완료되었습니다");
+	    		},
+	    		error: function(jqXHR){//실패응답
+	                alert("AJAX요청응답 실패 : 에러코드=" + jqXHR.status);
+	            }
+			});
+    	});
+	});
+	</script> 
+</head>
+<body>
+	<div class="myinfo">
+        <table>
+            <h2>개인정보</h2>
+            <hr align="left" style="border: solid 2px  black;">  
+            <colgroup>
+                <col style="width: 190px">
+                <col style="width: 60%">
+            </colgroup> 
+            <tr>
+                <th class="myInfoLabel">사진</th>
+                <td><img src="./image/image.jpg";border = 1px; id="img";/></td>
+                <!-- <td><input type="submit" class="update" value="사진 변경"></td> -->
+            </tr>
+                <th class="myInfoLabel">Email</th>
+                <td><input type="text" id="email" ><br></td>
+                <!--<td><input type="submit" class="update" value="이메일 변경"></td> -->
+            <tr>
+                <th class="myInfoLabel">휴대전화</th>
+                <td><input type="text" id="hpPhone" ></td>
+                <!--<td><input type="submit" class="update" value="휴대전화 변경" ></td> -->
+            </tr>
+            <tr>
+                <th class="myInfoLabel">생년월일</th>
+                <td><input type="text" id="birthday" readonly></td>
+            </tr>
+            <tr>
+                <th class="myInfoLabel">주소</th>
+                <td><input type="text" id="address" ></td>
+                <td><input type="submit" class="update" value="변경" font-size="50px"></td>
+            </tr>
+        </table>
+        <hr align="left" style="border: solid 1px  gray;">  
+        
+		<h2>회사정보</h2>
+        <hr align="left" style="border: solid 2px  black;">  
+		<table>
+            <colgroup>
+                <col style="width: 190px">
+                <col style=*>
+                <col style="width: 60%">
+            </colgroup> 
+            <tr>
+                <th class="myInfoLabel">사원번호</th>
+                <td><input type="text" id="employeeId" readonly></td>
+            </tr>
+            <tr>
+                <th class="myInfoLabel">직급</th>
+                <td><input type="text" id="position" readonly></td>
+            </tr>
+            <tr>
+                <th class="myInfoLabel">연차일수</th>
+                <td><input type="text" id="applyDays" readonly></td>
+            </tr>
+            <tr>
+                <th class="myInfoLabel">부서명</th>
+                <td><input type="text" id="departmentName" readonly></td>
+            </tr>
+            <tr>
+                <th class="myInfoLabel">입사일</th>
+                <td><input type="text" id="hireDate" readonly></td>
+            </tr>
+                <th class="myInfoLabel">내선번호</th>
+                <td><input type="text" id="officeTel"readonly></td>
+            </tr>
+		</table>
+    </body>
+</html>

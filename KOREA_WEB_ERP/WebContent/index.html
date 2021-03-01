@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="./bpopup/jquery.bpopup-0.1.1.min.js"></script> <!-- 팝업 플러그인 -->
+    <link href='./fullcalendar-5.5.1/lib/main.css' rel='stylesheet'/>
+    <link href='./calendar.css' rel='stylesheet'/>
+    <script src='./fullcalendar-5.5.1/lib/main.js'></script>
+    <script src='./fullcalendar-5.5.1/lib/locales/ko.js'></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script> <!--날짜 가공-->
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script> <!--모달창 움직임-->
+    <title>3조 8hours</title>
+    <style>
+    *{
+        box-sizing: border-box;
+    }
+
+    body.indexBody{
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        
+    }
+
+    body.indexBody>section>nav{
+        display: inline-block;
+        margin: 0;
+        width: 10%;
+        height: 700px;
+        float: left;
+        min-width: 100px;
+
+    }
+
+    body.indexBody>section>nav>div#navDiv{
+        overflow:hidden;
+		height:auto;   
+        flex-wrap: wrap;
+
+    }
+
+    
+    body>section>nav>div>div.nonmenu{
+        border-bottom: solid 1px black;
+        border-right: solid 1px black;
+        height: 140px;
+        /* overflow:hidden; */
+		/* height:auto; */
+
+        padding: 20px 0px;
+
+    }
+
+    body>section>nav>div>div.menu{
+        border-bottom: solid 1px black;
+        border-right: solid 1px black;
+        height: 140px;
+        /* overflow:hidden;
+		height:auto; */
+
+        padding: 0px;
+
+    }
+
+
+
+    nav div:last-child {
+        border-bottom: none;
+    }
+
+    nav>div a{
+        display: block;
+        color: black;
+        padding: 8px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: bold;
+        height: 100px;
+        padding-top: 35%;
+        font-size: 30px;
+    }
+
+    nav>div>div>div.commute{
+        display: block;
+        color: black;
+        padding: 8px;
+        text-align: center;
+        font-weight: bold;
+
+        padding: 0;
+        padding-top: 20%;
+        font-size: 30px;
+        /* height: 100%; */
+        /* height: 50%; */
+    }
+    
+    body>section>nav>div>div>div>input{
+        text-align: center;
+        font-size: 14px;
+        margin-top: 8px;
+        color: grey;
+        border: none;
+        width: 100%;
+    }
+
+    body>section>nav>div>div.current { /*현재 클릭된 페이지*/
+        background-color: #3B99D9;
+        color: white;
+    }
+
+    nav>div>div.menu:hover:not(.current){ /*마우스 오버시 동작*/
+        background-color: #3B99D9;
+    }
+
+    nav>div>div>a:hover:not(.current){ /*마우스 오버시 동작*/
+        color: white;
+    }
+
+    nav>div>div{
+        height: 90px;
+        display: block;
+    }
+
+    body>header{
+        border-bottom: black solid 1px;
+        padding: 10px;
+        height: 80px;
+    }
+    body>header>div.logo{
+        float: left;
+        height: 60px;
+        width: 200px;
+        display: inline-block;
+
+    }
+    body>header>div.logout{
+        float:right;
+        height: 60px;
+        padding-top: 23px;
+    }
+
+    body.indexBody>section{
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 80%;
+        float: left;
+    }
+
+  
+    body.indexBody>section>article{
+        float: left;
+        width: 90%;
+        height: 80%;
+        padding: 10px;
+    }
+
+    body>section>article{
+        /* padding: 15px; */
+    }
+
+
+    body>header img#logo {
+        width: 150px;
+        padding-left: 30px;
+        padding-top: 10px;
+    }
+    body>header img#status{
+        width: 50px;
+        float: right;
+        padding-top: 5px;
+    }
+    body>header span>a#logout{
+        text-align: right;
+        color: gray;
+        text-decoration: none;
+    }
+
+    body>header>div>span>input{
+        border: none; 
+        float: left; 
+        width: 55px;
+        font-size: 14px;
+    }
+
+</style>
+
+     <!--jquery사용-->
+
+	<script>
+	$(function(){ //HTML작업 이후 페이지가 뜨자마자 시작될 함수 
+		//이름과 출근시간을 메인페이지에 출력하기
+        var loginedId = localStorage.getItem('id'); //localStorage.getItem을 쓸 수 있는 이유는 login.html에서 localStorage.setItem으로 세팅을 했기 때문이다.
+        $.ajax({
+            url: "./first", //서블릿(로그인 하고 나서 비동기형으로 화면을 바꿀 건데 그 바뀌는 내용을 정의할 곳이 first서블릿이다. )
+            method: "get",
+           /*  data : {'id' : loginedId}, */
+            success: function(responseObj){
+                console.log(responseObj.starttime);
+                $("#name").val(responseObj.name); //"#name".val의 값을 responseObj.name으로 가져온 값으로 넣어라. 
+                $("#starttime").val(responseObj.starttime); //출근값 넣기 
+                $("#endtime").val(responseObj.endtime);
+            },
+            error: function(jqXHR){
+                alert("AJAX요청응답 실패: 에러코드=" + jqXHR.status);
+            }
+        });
+        
+        $("section>article").load("./calendar.html");
+        
+        
+        
+        //DOM트리에서 퇴근버튼 찾기 
+		var $menuEnd = $("body>section>nav>div>div>div#endTimeBtn");
+        //퇴근버튼이 클릭되면
+        var loginedId = localStorage.getItem('id');
+        $menuEnd.click(function(event){
+            $.ajax({
+                url: "./endtimepage",
+                method: "get",
+               /*  data: {'id': loginedId}, */
+                success: function(responseObj){
+                	alert("퇴근버튼 클릭됨.");
+                	console.log(responseObj.endtime);
+                	$("#endtime").val(responseObj.endtime);
+                },
+                error: function(jqXHR){
+                    alert("AJAX요청응답 실패: 에러코드="+jqXHR.status);
+                }     
+            });
+
+
+        });
+
+
+		
+		
+		//DOM트리에서 nav메뉴객체들 모두 찾기
+		var $menuObj = $("body>section>nav>div>div>a");
+
+		//nav 메뉴가 클릭되면
+		$menuObj.click(function(event){
+			//다른 메뉴를 section 영역에 뿌리기 전에 article 영역 비우기
+			$("body>section>article").empty();
+
+			//target으로 객체정보를 받아오고 그 객체의 "href"의 속성값을 .attr로 가져와서 var hrefValue에 대입하기 
+			var hrefValue = $(this).attr("href"); 
+			alert(hrefValue);
+
+            $.ajax({
+                url: hrefValue,
+                method: "get",
+                success: function(data){ //성공응답
+                  	$("section>article").html(data); //누른 메뉴의 화면을 section>article영역에 띄워라
+                }, 
+                error: function(jqXHR){ //실패응답
+                    alert("AJAX요청응답 실패: 에러코드=" + jqXHR.status);
+                } 
+            });
+            return false; //기본이벤트 실행 막기 
+        });
+
+        //DOM트리에서 로그아웃 객체 찾기
+        var $logoutObj = $("body>header>div>span>a#logout");
+        //로그아웃 메뉴가 클릭되면
+        $logoutObj.click(function(event){
+            hrefValue = $(event.target).attr("href");
+            $.ajax({
+                url: hrefValue,
+                method: 'get',
+                success: function(responseObj){ //성공응답
+                    location.href="http://localhost:8888/KOREA_WEB_ERP";
+                },
+                error: function(jqXHR){ //실패응답
+                    alert("AJAX요청응답 실패: 에러코드=" + jqXHR.status);
+                }
+            });
+            return false; //기본이벤트 실행 막기 
+        });
+    });
+
+    </script>
+</head>
+
+<body class="indexBody">
+    <header>
+        <div class="logo">
+            <a href="./index.html"><img src="./img/logo.png" alt="logo" id="logo" href="http://www.naver.com"></a>
+            <span style="width: 500px; display: block; padding-left: 220px; padding-bottom: 40px;"> </span>
+        </div>
+        <div class="logout">
+            <span > <input type="text"  id="name" readonly> </span> &nbsp;&nbsp;
+            <span><a href="logout" id="logout">로그아웃 </a></span>
+        </div>
+        <img src="./img/status.png" alt="status" id="status">
+    </header>
+
+    <section class="indexSection">
+        <nav class="indexNav">
+            <div id="navDiv">
+                <div class="nonmenu">
+                    <div class="commute">출근</div>
+                    <div class="time"><input type="text" id="starttime" readonly ></div>
+                </div>
+                <div class="nonmenu">
+                    <div class="commute" id="endTimeBtn">퇴근</div>
+                    <div class="time"><input type="text" id="endtime" readonly> </div>
+                </div>
+                <div class="menu"><a href="myinfo.html" class="menutext">내정보</a></div>
+                <div class="menu"><a href="payment.html" class="menutext">급여</a></div>
+                <div class="menu"><a href="board.html" class="menutext">게시판</a></div>
+            </div>
+        </nav>
+        <article style="width:90%; padding:5;">
+            article영역 
+        </article>
+    </section>
+</body>
+</html>
