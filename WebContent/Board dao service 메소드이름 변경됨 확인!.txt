@@ -1,0 +1,19 @@
+BoardDAO클래스
+이름 변경됨
+
+selectPageNum -> selectCount 로 이름변경
+
+메소드추가됨
+
+List<Board> selectPage(int thispage, int cnt_per_page) throws FindException;
+
+
+BoardService클래스
+이름변경됨
+
+getPageNum -> findCount 로 이름변경
+
+메소드 추가됨
+
+List<Board> findBoardPage(int thispage, int cnt_per_page) throws FindException;
+

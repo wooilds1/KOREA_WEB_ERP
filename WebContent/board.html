@@ -1,0 +1,177 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- 부트스트랩 CDN <head>안쪽 <meta charset="UTF-8">뒤에  넣어주세요 위쪽에 넣어줘야 적용이 됨 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- css링크-->
+    <link rel="stylesheet" type="text/css" href="./logincss.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+</head>    
+    <body>
+       
+        
+        <input type="button" name="" id="" value="전체게시판보기버튼">
+        <section>
+            <article>
+                
+            </article>
+            
+        </section>
+        
+        
+<!-- 민성 게시판목록 시작-->
+<script>
+    
+var startPage=0; //시작페이지
+var endPage=0; //끝페이지
+function showBoradPage(thisPage){  //showBoradPage 메소드 만들기(인자값은 thisPage)
+    $("section>article").empty(); //showBoradPage 메소드를 호출할때 section안쪽 articel의 영역을 empty();  지운다
+    $("li.origin").hide(); //showBoradPage 메소드를 호출할떄 li.origin을 숨긴다   
+    $.ajax({
+            url : "./board" , //요청 url 
+            method: "get", //요청방식
+             data : {"thisPage": thisPage}, //서버로 보낼 데이터 thisPage(현재페이지)
+            success: function(responseObj){ //성공시 보여줄 내용
+                //-------------------------------------
+                startPage = responseObj.startPage; //start 페이지값은 서버에서 가지고온 startPage
+                endPage = responseObj.endPage;      //endPage의 값은 responseObj에서 가지고온 endPage
+                $('section>article').empty();  //요청성공시 scetion안쪽의 articel영역을 지운다
+                $minsungClone = $('div.minsung').clone(); //clone()은 객체를 복사하는 메소드 div.minsung객체를 찾아서 복사한다.
+                $minsungClone.removeClass("minsung"); //removeClass는 선택한 요소에서 클래스값을 제거함 minsungClone에서 minsung클래스를 제거
+                $minsungClone.addClass("minsungClone");//addClass는 선택한 요소에 클래스값을 추가 minsungClone에 minsungClone을 추가
+                
+                
+                $('section>article').append($minsungClone); //append는 선택한 요소의 내용의 끝에 콘텐트를 추가함 section안에 article 영역에 $minsungClone을 추가            
+                let $tbodyObj = $minsungClone.find('table>tbody');//find는 어떤 요소의 하위요소 중 특정 요소를 찾을때 사용 $minsungClone의 table>tbody 영역을 찾아서 $tbodyObj에 넣기
+                // $tbodyObj.empty();
+                let tableData =  $tbodyObj.html(); //table객체의 내용 ex)<tr>~~~</tr>의 문자열
+                let arr = responseObj.list; //responseObj.list의 내용을 arr에 담는다
+                
+                $(arr).each(function(index, element){ // db에 있는 게시글의 수 만큼 arr를 반복해서 저장된 데이터를 보여준다
+                    //console.log("게시글번호:"+ element.board_no +"게시글제목" + element.board_title +"작성자:"+ element.emp_id +"작성일 :"+element.board_date);
+                
+                    tableData += '<tr>'; //tr 추가
+                
+                    tableData += '<td scope="row">'; //td추가
+                    tableData += element.board_no; //td 내용 추가
+                    tableData += '</td>'; //td닫기추가
+                
+                    tableData += '<td scope="row">'; //td추가
+                    tableData += element.board_title; //td 내용 추가
+                    tableData += '</td>'; //td닫기추가
+                
+                    tableData += '<td scope="row">'; //td추가
+                    tableData += element.emp_id; //td 내용 추가
+                    tableData += '</td>'; //td닫기추가
+                
+                    tableData += '<td scope="row">'; //td추가
+                    tableData += element.board_date; //td 내용 추가
+                    tableData += '</td>'; //td닫기추가
+                
+                    tableData += '</tr>'; //tr닫기추가
+                
+                });
+                $tbodyObj.html(tableData); //tableObj의 내용을 지우고 $tableData의 내용으로 넣는다
+                //-------------------------------------
+                /* 페이지그룹 */
+                
+                //이전버튼
+                if( responseObj.startPage > 1){  //시작페이지가 1보다 크면 '이전'을 활성화한다
+                    $minsungClone.find("ul.pagination>li.prev").removeClass("disabled"); //$minsungClone에서 ul.pagiation안에 li.prev를 find(찾아서). "disabled"를 removeClass한다(클래스를 지운다)
+                }else{
+                    $minsungClone.find("ul.pagination>li.prev").addClass("disabled"); //시작페이지가 1보다크지않으면 다시 $minsungClone객체에서 il.prev찾아서 "disabled"를 클래스로추가한다
+                }
+                
+                //페이지목록
+                $minsungClone.find('ul.pagination>li.no').remove(); //$minsungClone에서 ul.pagination 안쪽 li.no 영역을 찾아서 remove(지운다)한다.
+                var $originObj =  $minsungClone.find('ul.pagination>li.origin'); //$minsungClone객체에서 ul.pagination안쪽에 li.origin을 찾아서 $originObj변수에 넣는다
+                for(var i=responseObj.startPage; i<=responseObj.endPage; i++){ //반복 i의 값은 서버에서받아온 startPage이고 i가 서버에서 받아온 endPage보다 작거나같을떄 i값을 ++
+                    //console.log(i);
+                    var $copyObj = $originObj.clone(); //페이지번호용 li객체를 복제한다 $originObj를 복사해서 $copyObj변수안에 넣는다
+                    $copyObj.removeClass("origin"); //copyObj객체에서 "origin"클래스를 삭제한다
+                    $copyObj.addClass("no"); //copyObj객체에서 "no"를 클래스로 추가한다
+                    $copyObj.show(); // copyObj객체의 숨겨진 요소를 나타나게한다 
+                    $copyObj.find("a.page-link").html(i); //페이지번호설정 //copy객체의 a.page-link를 찾아서 내용을 지운 후 i값으로 새로운 내용을 넣는다
+                    $originObj.before($copyObj);//originObj 앞에 copyObj를 추가하거나 이동 (before)
+                }
+                
+                //다음버튼
+                if(responseObj.endPage < responseObj.totalPage){ //서버에서받아온 endPage의 값이 서버에서받아온 totalPage보다 작을떄
+                    $minsungClone.find("ul.pagination>li.next").removeClass("disabled"); //$minsungClone객체에서 ul.pagination안쪽에  li.next 를 찾아서 "disabled"클래스를 삭제한다
+                }else{ //endPage가 totalPage보다 작지 않다면
+                    $minsungClone.find("ul.pagination>li.next").addClass("disabled"); //$minsungClone객체에서 ul.pagination안쪽에 li.next를 찾아서 li.next안에 "disabled"클래스를 추가하낟
+                }
+                //%minsungClone객체의 숨겨진 요소들을 나타나게한다
+                $minsungClone.show();
+            }, //success 끝
+            error:function(jqXHR){
+                alert("오류: " + jqXHR.status)
+            } //error 끝
+        });//$.ajax 끝
+}
+
+
+$(function(){
+    $("input[type=button]").click(function(){ //전체보기게시판 버튼을 클릭했을때
+
+        startPage = 1; //시작페이지의 값은 1로 설정
+        showBoradPage(startPage);
+        //console.log(showBoradPag);  
+       /// alert("input버튼클릭"); 
+        return false; //기본이벤트를 막는다  
+    }); //버튼클릭
+
+    $('section>article').on('click','div.minsungClone>nav>ul.pagination>li.prev>a', function(event){ //이전을 눌렀을떄
+        var prev = startPage-1; // 이전버튼을 누르면 시작페이지가 -1이 됨
+        showBoradPage(prev); //showBoradPage 메소드를 인자값prev을 줘서 호출한다
+      return false;
+    });
+    $('section>article').on('click','div.minsungClone>nav>ul.pagination>li.next>a', function(event){ //다음을 눌렀을떄
+        //alert("다음클릭됨");
+
+        var next = startPage+3; //다음버튼을 누르면 시작페이지를+3시킴 
+        //서블릿에서 보여줄 페이지목록수는 3개이고 현재시작페이지값은 전체보기버튼을 누르면 시작페이지의값이 1이 되기때문에 +3을 해주면 시작페이지의값이 4가 되므로 4번째게시글목록을 볼수있음
+        showBoradPage(next);
+        return false; 
+    });
+    //--페이지번호가 클릭 시작--
+    $('section>article').on('click','div.minsungClone>nav>ul.pagination>li.no>a',function(event){
+        var pageno = $(event.target).html(); //$(event.tager)은 이벤트가 시작된 jQuery 객체요소 tager은 이벤트에 등록된 요소나 또는 자식,후손들  즉 event가 발생한 요소들을 모두 반환해주는메소드
+        //jQuery객체의 전체이벤트 요소의 내용들을 변수 pageno에 넣는다
+       // alert("클릭된 페이지번호:" + pageno);
+        startPage = pageno; //시작페이지값에 pageno를 넣는다 pageon는 페이지목록수를 클릭했을때 발생하는 이벤트들
+        showBoradPage(startPage);//showBoradPage의 메소드에 인자값 startPage를 보내서 실행한다
+        return false;
+    });
+    //--페이지번호가 클릭 끝--
+});//$(function)
+
+            </script>
+        <div class="minsung container" style="display: none;">
+            <table class="table table-borderde table table-hover">
+                <thead>
+                <tr class="head"><th scope=col>번호</th><th scope=col>제목</th><th scope=col>작성자</th><th scope=col>작성일</th></tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+            <hr>
+            <input class="btn btn-primary pull-right" type="button" value="글쓰기">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                  <li class="page-item disabled prev">
+                    <a class="page-link" href="#" tabindex="1">이전</a>
+                  </li>
+                  <li class="page-item origin"><a class="page-link" href="#">테스트</a></li><!-- 테스트용 객체 li생성 후 복사한 뒤 보여줄땐 hied 처리해서 숨겨준다-->
+        
+                  <li class="page-item disabled next">
+                    <a class="page-link" href="#">다음</a>
+                  </li>
+                </ul>
+              </nav>
+        </div>
+        <!-- 민성 게시판목록 끝-->
+    </body>
+</html>
