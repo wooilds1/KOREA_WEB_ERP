@@ -53,7 +53,6 @@ public class MyInfoServlet extends HttpServlet {
 			map.put("hireDate",hireDate);
 			map.put("officeTel",e.getOffice_tel());
 			jsonStr = mapper.writeValueAsString(map);
-			System.out.println("myinfoServlet json");
 			out.print(mapper.writeValueAsString(map));
 		}catch(FindException e){
 			e.printStackTrace();

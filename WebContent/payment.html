@@ -12,7 +12,6 @@
 		$('div.salary>table').empty();							
 		var start = $("input[name=start]").val();
 		var end = $("input[name=end]").val();
-		alert("./salary 요청전1 start=" + start + ", end=" + end );
 		$.ajax({
 			url : "./salary", 
 			method: "get",    
@@ -21,12 +20,7 @@
 			success: function(responseObj){
 				console.log(start);
 				console.log(end);
-	/*
-	* {"end_page":3,"start_page":1,"totalPage":3,"list":[{"health_insurance":100,"extra_pay":100,"national_pension":100,"after_tax_salary":2000000,"hire_insurance":100,"salary_date":"2020-11","total_deduction":100,"local_income_tax":100,"income_tax":100,"position_pay":100,"before_tax_salary":2200000},{"health_insurance":100,"extra_pay":100,"national_pension":100,"after_tax_salary":2000000,"hire_insurance":100,"salary_date":"2020-10","total_deduction":100,"local_income_tax":100,"income_tax":100,"position_pay":100,"before_tax_salary":2200000},{"health_insurance":100,"extra_pay":100,"national_pension":100,"after_tax_salary":2000000,"hire_insurance":100,"salary_date":"2020-09","total_deduction":100,"local_income_tax":100,"income_tax":100,"position_pay":100,"before_tax_salary":2200000}]}
-	*/
-				if(responseObj.status != -1){  	
-					//responseObj.endPage
-					//목록을 테이블로 보여주기
+		if(responseObj.status != -1){  	
 					var arr = responseObj.list;
 					var $tableObj = $("<table>");
                			var tableData = "<tr><th>지급일자</th><th>지급총액</th><th>소득세</th><th>고용보험</th><th>공제총액</th><th>기타수당</th><th>직급수당</th><th>실지급액</th><th>지방소득세</th><th>건강보험</th><th>국민연금</th></tr>";
@@ -94,7 +88,6 @@
              				$("div.salary>table").append($salaryObj);
 
 
-					//페이지그룹화
 					end_page = responseObj.end_page;
 					start_page = responseObj.start_page;
 					totalPage = responseObj.totalPage;
@@ -115,26 +108,22 @@
 						pagegroupHtml += '&nbsp;&nbsp;<span class="next">▶</span>';
 					}
 					$("div.pagegroup").html(pagegroupHtml);
-				}//end if status
-			}//success
-		});//$.ajax
+				}
+			}
+		});
 	 };
      $(function(){         
-		 //--FORM 클릭 START--
          let $formObj = $("div.salary>form");
          $formObj.submit(function(event){
 			var currentPage = 1; //무조건 1페이지검색
         	showResult(event);
             return false;
-         }); //form submit
- 		//--FORM 클릭 END--
-
-		//--페이지 클릭 START --
+         }); 
 		$("div.pagegroup").on('click', 'span.yes', function(event){
 			var currentPage = $(event.target).html(); //클릭된 span객체의 html은 페이지번호이다.ex: <span>2</span>
 			showResult(event, currentPage);
 			return false;
-		}); //
+		});
 		$("div.pagegroup").on('click', 'span.next', function(event){
 			var start_page =4;
 			showResult(event, start_page);
@@ -146,8 +135,7 @@
 			showResult(event, start_page);
 			return false;
 		});
-        //--페이지 클릭 END --
-     });//$(function
+     });
 	
 </script>
   
@@ -155,45 +143,48 @@
         <style>
 
             *{font-family: 'Do Hyeon', sans-serif;}
-            div.salary> table {
+            body > section > article > div.salary{
+            	width: 1000px;
+                height: 500px;
+            
+            }
+            body > section > article > div.salary > h1{
+            font-size: 35px;
+            }
+            body > section > article > div.salary > table {
                     box-sizing: border-box;
-                    width: 100%;
-                    height: 80px;
+                    width: 1000px;
+                    height: 300px;
                     text-align: center;
                     }
-
-            body > div.salary > table > div > table > tr > th{	width: 70px;
-                    height: 70px;
-                    background-color: grey;
-                                 color: white;
-                    }
-                    
-           body > div.salary > table > tbody > tr > th{
-          		    width: 70px;
-                    height: 70px;
+			body > section > article > div.salary > form > ul.month{ 
+	                display: flex;
+	                width:450px;
+	                height:70px;
+	                align-items: center;
+	                float: right;
+	                list-style-type:none;}
+           body > section > article > div.salary > table > div > table > tr > th{	
+          			 width: 300px;
+              		height: 80px;
                     background-color: grey;
                     color: white;
+                    }
+         
+           body > section > article > div.salary > table > tr{
+          	   width: 300px;
+               height: 300px;
            
            }
-           body > div.salary > table > div > table > tr{
-          	   width: 70px;
-               height: 70px;
-           
-           }
-           body > div.salary > table > div > table > tr:hover{background-color: #f5f5f5;}
-                    
-            body > div.salary > table > tbody > tr{
-               width: 70px;
-               height: 70px;}
-               
-            body > div.salary > table > tbody > tr:hover{background-color: #f5f5f5;}
+          	body > section > article > div > table > div > table > tr > td{
+          	   width: 300px;
+               height: 80px;
+          	}
+           body > section > article > div > table > div > table > tr:hover{
+           background-color: #f5f5f5;}
+          
 
-            body > div.salary > form > ul.month{ 
-                display: flex;
-                align-items: center;
-                float: right;
-                list-style-type:none;}
-			body > div > form > ul > li > input.s{
+			body > section > article > div.salary > form > ul.month > li > input.s{
 			width:60px;
 			height:30px;
 			}
@@ -201,27 +192,14 @@
 			div.salary> div.pagegroup> span.no{
 				background-color:darkslategrey;
 				text-decoration: underline;
+				wjdth:1000px;
 			}
-			/* 오문정슨생님 START
-			div.salary>div.pagegroup{
-				border: 1px solid;
-			}
-			div.salary>div.pagegroup>span.no{
-				background-color: gray;
-				
-			}
-			div.salary>div.pagegroup>span.yes{
-				background-color: red;
-				text-decoration: underline;
-			}
-			div.salary>div.pagegroup>span.yes:hover{
-				font-weight: bold;
-				background-color: blue;
-			}
-			오문정 END */
+			body.salarybody{
+			width:1000px;
+			padding:50px;}
         </style>
     </head>
-    <body>
+    <body class="salarybody">
 <div class="salary">  
    <h1>&nbsp;&nbsp;상세급여내역조회</h1>
    <form name="nav">

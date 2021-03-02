@@ -23,17 +23,9 @@ import service.MainPageServiceImpl;
 import vo.Commute;
 import vo.Employee;
 
-/**
- * 	2021-02-28  조익호
- * 	출근시간만 존재할경우 출근시간,퇴근시간도 찍히게끔되어있어
- * 	조건변경함 (nullPointer Exception)
- */
 public class FirstServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json;charset=utf-8");//그냥암기 
 		PrintWriter out = response.getWriter(); //그냥암기 
@@ -41,8 +33,6 @@ public class FirstServlet extends HttpServlet {
 		//세션객체(wb별 객체)얻기
 		HttpSession session = request.getSession();
 		String id = (String) session.getAttribute("login");
-		
-//		String id = request.getParameter("id"); //data의 값 
 		
 		MainPageService service = new MainPageServiceImpl(); //객체생성 세팅 
 		
@@ -64,23 +54,19 @@ public class FirstServlet extends HttpServlet {
 		
 		Date today = new Date(); //현재날짜 
 		SimpleDateFormat dateTypeDay = new SimpleDateFormat("yyyy-MM-dd"); //날짜형식 1
-		SimpleDateFormat dateTypeTime = new SimpleDateFormat("HH:mm:ss"); //날짜형식 2
-		
+		SimpleDateFormat dateTypeTime = new SimpleDateFormat("HH:mm:ss"); //날짜형식 2		
 		try {
 			if(null==service.findStartTime(id)) { //로그인 시 출근시간 추가 및 출력 
 				Commute c = new Commute();
 				Timestamp t = new Timestamp(System.currentTimeMillis());
 				c.setStart_time(t);
-				//System.out.println(id);
 				Employee e = new Employee();
 				e.setEmp_id(id);
 				c.setEmp_vo(e);
 				service.addCommute(c);
-				//System.out.println("세션타임 출근시간 테스트1"+dateTypeTime.format(t));
 				map.put("starttime", dateTypeTime.format(t));
 				
-			}else if(null==service.findEndTime(id)){
-				// 퇴근시간이 없을경우 출근시간만 출력 2021-02-28 조익호 
+			}else if(null==service.findEndTime(id)){ 
 				Timestamp starttime = service.findStartTime(id);
 				map.put("starttime", dateTypeTime.format(starttime));
 			}else {
@@ -89,9 +75,6 @@ public class FirstServlet extends HttpServlet {
 				Timestamp endtime = service.findEndTime(id);
 				map.put("endtime", dateTypeTime.format(endtime));
 			}
-
-			
-
 			out.print(mapper.writeValueAsString(map));
 		} catch (FindException e) {
 			e.printStackTrace();

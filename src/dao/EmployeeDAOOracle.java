@@ -139,7 +139,6 @@ public class EmployeeDAOOracle implements EmployeeDAO {
 				flag = true;
 			}
 			if(flag) {
-				System.out.println(modifySQL+modifySQLSET+modifySQL1);
 				stmt.execute(modifySQL+modifySQLSET+modifySQL1);	
 				try {
 					return selectById(e.getEmp_id());

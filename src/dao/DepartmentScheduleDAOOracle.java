@@ -249,16 +249,29 @@ public class DepartmentScheduleDAOOracle implements DepartmentScheduleDAO {
 		String updateSQLSet = "";
 		String updateSQL1 = "where dept_schedule_no='"+ds.getDept_schedule_no()+"'";
 		
+		DepartmentSchedule oldds = null;
+		try {
+			 oldds = selectByNo(ds.getDept_schedule_no());
+		} catch (FindException e1) {
+			throw new ModifyException(e1.getMessage());
+		}
+		
+		
 		try {
 			stmt = con.createStatement();
 			boolean flag = false;
+			
+			if(oldds.getDept_content() == null) {
+				oldds.setDept_content("");
+			}
+			
 			//dept_title 업데이트
-			if(ds.getDept_title() != null && !ds.getDept_title().equals("")) {
+			if(ds.getDept_title() != null && !ds.getDept_title().equals("") && !ds.getDept_title().equals(oldds.getDept_title())) {
 				updateSQLSet = "dept_title='"+ds.getDept_title()+"' ";
 				flag = true;
 			}
 			//dept_content 업데이트 
-			if(ds.getDept_content() != null && !ds.getDept_content().equals("")) {
+			if(ds.getDept_content() != null && !ds.getDept_content().equals(oldds.getDept_content())) {
 				if(flag) {
 					updateSQLSet += ",";
 				}
@@ -266,7 +279,7 @@ public class DepartmentScheduleDAOOracle implements DepartmentScheduleDAO {
 				flag = true;
 			}
 			//dept_task_start 업데이트
-			if(ds.getDept_task_start() != null && !ds.getDept_task_start().equals("")) {
+			if(ds.getDept_task_start() != null && ds.getDept_task_start().getTime() != oldds.getDept_task_start().getTime()) {
 				if(flag) {
 					updateSQLSet += ",";
 				}
@@ -274,7 +287,7 @@ public class DepartmentScheduleDAOOracle implements DepartmentScheduleDAO {
 				flag = true; //TO_DATE로 쓸떄는 뒤에 날짜, 시간형식을 지정해줘야 한다.
 			}
 			//dept_task_end 업데이트
-			if(ds.getDept_task_end() != null && !ds.getDept_task_end().equals("")) {
+			if(ds.getDept_task_end() != null && ds.getDept_task_end().getTime() != oldds.getDept_task_end().getTime()) {
 				if(flag) {
 					updateSQLSet += ",";
 				}
@@ -285,9 +298,10 @@ public class DepartmentScheduleDAOOracle implements DepartmentScheduleDAO {
 			if(flag) {
 				System.out.println(updateSQL + updateSQLSet + updateSQL1);
 				stmt.executeUpdate(updateSQL + updateSQLSet + updateSQL1);
-			} else {
-				throw new ModifyException("수정할 부서일정이 없습니다.");
-			}
+			} 
+//			else {
+//				throw new ModifyException("수정할 부서일정이 없습니다.");
+//			}
 		} catch (SQLException e) {
 			throw new ModifyException(e.getMessage());
 		} finally {

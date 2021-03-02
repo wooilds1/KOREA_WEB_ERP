@@ -46,7 +46,8 @@
           dayMaxEventRows : true,
           eventDisplay: 'block', //모든 이벤트 블록표시
           // contentHeight: "auto",
-          // aspectRatio : 1,
+          // aspectRatio : 1.35,
+          // handleWindowResize : false,
 
           //일정추가 버튼
           customButtons: {
@@ -79,12 +80,18 @@
                 }else{
                   endHours = d.getHours()+2
                 }
+                if(startHours == 24){
+                  startHours = '00';
+                }
+                if(endHours == 24){
+                  endHours = '00';
+                }
                 var str = d.getFullYear()+'-'+month+'-'+day;
-                console.log(str);
                 $("input[name=newScheduleStartDate]").val(str);
                 $("input[name=newScheduleStartTime]").val(startHours+":00");
                 $("input[name=newScheduleEndDate]").val(str);
                 $("input[name=newScheduleEndTime]").val(endHours+":00");
+                $("#statusBox").val("1").prop("selected", true);
                 $("#statusBox>.employeeStatus").removeAttr('disabled');
                 $("#statusBox>.departmentStatus").removeAttr('disabled');
                 $('#element_to_pop_up').bPopup({
@@ -93,6 +100,8 @@
               }
             }
           },
+          // 일정추가 버튼
+
           headerToolbar:{
             left:'today',
             center: 'title',
@@ -112,23 +121,9 @@
               $(e.el).css('color', 'red');
             }
           },
+
           //달력에 표시될 모든 이벤트들
           eventSources: [
-            // {
-            //   events : function(info, successCallback, failureCallback){ //개인일정
-            //     $.ajax({
-            //       url:"./viewallevent",
-            //       traditional : true, //배열값을 자바에 넘겨줄 수 있다
-            //       data : {"status" : statusArr},
-            //       success : function(responseObj){
-            //         successCallback(responseObj);
-            //       },
-            //     });
-            //   },
-            //   color : 'blue',
-            //   id : "1",
-            // }
-
             {
               events : function(info, successCallback, failureCallback){ //개인일정
                 $.ajax({
@@ -243,6 +238,8 @@
             },
 
           ],
+          // 이벤트 선언 끝
+
 
           eventContent: function(info) {
             var String = "";
@@ -279,6 +276,7 @@
             //   container: 'body'
             // });
           },
+
           // 셀 한개가 클릭됬을 때
           dateClick: function(info) { 
             $("#newScheduleForm")[0].reset();
@@ -294,16 +292,25 @@
             }else{
               endHours = d.getHours()+2
             }
+            if(startHours == 24){
+              startHours = '00';
+            }
+            if(endHours == 24){
+              endHours = '00';
+            }
             $("input[name=newScheduleStartDate]").val(info.dateStr);
             $("input[name=newScheduleStartTime]").val(startHours+":00");
             $("input[name=newScheduleEndDate]").val(info.dateStr);
             $("input[name=newScheduleEndTime]").val(endHours+":00");
+            $("#statusBox").val("1").prop("selected", true);
             $("#statusBox>.employeeStatus").removeAttr('disabled');
             $("#statusBox>.departmentStatus").removeAttr('disabled');
             $('#element_to_pop_up').bPopup({
               modalClose: false,
             });
           },
+          // 셀 한개 클릭 끝
+
           //셀을 여러개 선택했을 때
           select: function(info) {
             $("#newScheduleForm")[0].reset();
@@ -330,18 +337,28 @@
             }else{
               endDate = info.end.getDate()-1;
             }
+            if(startHours == 24){
+              startHours = '00';
+            }
+            if(endHours == 24){
+              endHours = '00';
+            }
             var endString = info.end.getFullYear()+"-"+endMonth+"-"+endDate;
             $("input[name=newScheduleStartDate]").val(info.startStr);
             $("input[name=newScheduleStartTime]").val(startHours+":00");
             $("input[name=newScheduleEndDate]").val(endString);
             $("input[name=newScheduleEndTime]").val(endHours+":00");
+            $("#statusBox").val("1").prop("selected", true);
             $("#statusBox>.employeeStatus").removeAttr('disabled');
             $("#statusBox>.departmentStatus").removeAttr('disabled');
             $('#element_to_pop_up').bPopup({
               modalClose: false,
             });
           },
-          eventClick: function(info){ // 이벤트 클릭됬을 때
+          // 셀 여러개 선택 끝
+
+          // 이벤트 클릭됬을 때
+          eventClick: function(info){ 
             // console.log(info.event.extendedProps.description);
             // console.log(info.event.id);
             $(".scheduleNo").val(info.event.id);
@@ -351,15 +368,33 @@
             switch(info.event.extendedProps.schedule_status){
               case 1:
               $(".scheduleStatus").html("업무");
+              $("#scheduleColorLine").removeAttr("hidden");
+              $("#scheduleColorLine").prop("src", "./img/업무.png");
               break;
               case 2:
               $(".scheduleStatus").html("출장");
+              $("#scheduleColorLine").removeAttr("hidden");
+              $("#scheduleColorLine").prop("src", "./img/출장.png");
               break;
               case 3:
               $(".scheduleStatus").html("연차");
+              $("#scheduleColorLine").removeAttr("hidden");
+              $("#scheduleColorLine").prop("src", "./img/연차.png");
               break;
               case 4:
               $(".scheduleStatus").html("팀");
+              $("#scheduleColorLine").prop("hidden", true);
+              if(info.event.extendedProps.dept_id == "1000"){
+                $("#scheduleDepartmentColorLine").prop("src", "./img/영업팀.png");
+              }else if(info.event.extendedProps.dept_id == "2000"){
+                $("#scheduleDepartmentColorLine").prop("src", "./img/총무팀.png");
+              }else if(info.event.extendedProps.dept_id == "3000"){
+                $("#scheduleDepartmentColorLine").prop("src", "./img/자료관리팀.png");
+              }else if(info.event.extendedProps.dept_id == "4000"){
+                $("#scheduleDepartmentColorLine").prop("src", "./img/사업관리팀.png");
+              }else if(info.event.extendedProps.dept_id == "5000"){
+                $("#scheduleDepartmentColorLine").prop("src", "./img/모바일팀.png");
+              }
               break;
             }
             $(".scheduleTime").html((moment(info.event.start).format('YYYY-MM-DD HH:mm')) + " ~ " + (moment(info.event.end).format('YYYY-MM-DD HH:mm')));
@@ -379,7 +414,7 @@
             
             if(info.event.extendedProps.dept_id != undefined){
               $("#departmentViewTable").css('display', 'table-row');
-              $("div.scheduleDepartment").html(info.event.extendedProps.dept_name);
+              $(".scheduleDepartment").html(info.event.extendedProps.dept_name);
             } else{
               $("#departmentViewTable").css('display', 'none');
             }
@@ -393,6 +428,9 @@
               modalClose: false,
             });
           },
+          // 이벤트 클릭 끝
+
+
           eventTimeFormat: { // like '14:30:00'
             hour: '2-digit',
             minute: '2-digit',
@@ -408,7 +446,8 @@
         $("#element_to_pop_up>section>form>div>ul>li>input[type=submit]").click(function(){
             // var $data = $("#newScheduleForm").serialize();
             // var $data = $("#newScheduleForm")[0];
-            if($("input[name=uploadFile]").val() != undefined){
+            // 파일 크기 체크
+            if($("input[name=uploadFile]").val() != ""){
               if(!fileCheck(this.form.uploadFile)){
                 return false;
               }
@@ -440,7 +479,6 @@
 
             if(correctTime && titleCheck){ //시간조건 , 제목비어있는지 확인
               if($(".trigger").val() == 0){ // 그냥 저장버튼 눌렀을 때
-                console.log(startDate);
                 $.ajax({
                   url: "./addevent",
                   method: "post",
@@ -453,7 +491,6 @@
                     if(responseObj.status == undefined){
                       if($("#statusBox option:selected").val() != 4) {
                         calendar.getEventSourceById($("#statusBox").val()).refetch();
-                        console.log($("#statusBox").val());
                       }else{
                         calendar.getEventSourceById(responseObj[0]['dept_id']).refetch();
                       }
@@ -501,6 +538,9 @@
               }
             return false;
           });
+          // 저장버튼 클릭 끝
+
+
 
           // 수정버튼 클릭
         $(".updateButton").click(function(){ 
@@ -514,7 +554,7 @@
             $("#statusBox").val("2").prop("selected", true);
           } else if($(".scheduleStatus").text() == "연차"){
             $("#statusBox").val("3").prop("selected", true);
-          } else if($(".scheduleStatus").text() == "팀"){
+          } else {
             $("#statusBox").val("4").prop("selected", true);
           }
           var string = $(".scheduleTime").text();
@@ -530,7 +570,6 @@
           var realfilename = fileValue[fileValue.length-1];
           $("input[name=prevFileName]").val(realfilename);
 
-          $("input[name=newScheduleContent]").text($(".scheduleContent").text());
           if($(".scheduleStatus").text() == "팀"){
             $("#statusBox>.departmentStatus").removeAttr('disabled');
             $("#statusBox>.employeeStatus").attr('disabled', true);
@@ -544,12 +583,15 @@
           });
         });
 
+        // 수정버튼 클릭 끝
+
         //삭제버튼 클릭
         $(".deleteButton").click(function(){
           $('#element_to_pop_up3').bPopup({
               modalClose: false,
           });
         });
+        //삭제버튼 클릭 끝
 
         //삭제버튼 확인 클릭
         $("#deleteOK").click(function(){
@@ -587,20 +629,24 @@
           });
           return false;
         });
+        //삭제버튼 확인 클릭 끝
+
 
         // 삭제되었을때 모달창 확인 클릭
         $("#deleteConform").click(function(){
           $("#element_to_pop_up2").bPopup().close();
           $("#element_to_pop_up4").bPopup().close();
         });
+        // 삭제되었을때 모달창 확인 클릭 끝
 
         // 삭제 오류 떴을때 확인 클릭
         $("#deleteError").click(function(){
           $("#element_to_pop_up3").bPopup().close();
           $("#element_to_pop_up5").bPopup().close();
         });
+        // 삭제 오류 떴을때 확인 클릭 끝
 
-        //개인일정 체크박스가 변경되면
+        //개인일정 체크박스가 변경
         $("div.employeeCheckBoxDiv input[type=checkbox]").change(function(event){
           if($(event.target).prop("checked")){
             // statusArr.splice($(event.target).val()-1,0,$(event.target).val());
@@ -612,8 +658,9 @@
           calendar.getEventSourceById($(event.target).val()).refetch();
           return false;        
         });
+        //개인일정 체크박스가 변경 끝
 
-        //부서일정 체크박스가 변경되면
+        //부서일정 체크박스가 변경
         $("div.departmentCheckBoxDiv input[type=checkbox]").change(function(event){
           var eventSource = calendar.getEventSourceById($(event.target).val());
           // var eventArr = eventSource.getEvents();
@@ -627,19 +674,21 @@
           eventSource.refetch();
           return false;
         });
+        //부서일정 체크박스가 변경 끝
 
         //모달창 드래그 가능하게
-        $('#element_to_pop_up').draggable({'cancel':'.popup1_body', containment:'parent', scroll:false});
-        $('#element_to_pop_up2').draggable({'cancel':'.popup2_body', containment:'parent', scroll:false});
-        $('#element_to_pop_up3').draggable({'cancel':'.popup3_body, footer', containment:'parent', scroll:false});
-        $('#element_to_pop_up4').draggable({'cancel':'.popup4_body, footer', containment:'parent', scroll:false});
-        $('#element_to_pop_up5').draggable({'cancel':'.popup5_body, footer', containment:'parent', scroll:false});
+        $('#element_to_pop_up').draggable({'cancel':'#modalBody1', containment:'parent', scroll:false});
+        $('#element_to_pop_up2').draggable({'cancel':'#modalBody2', containment:'parent', scroll:false});
+        $('#element_to_pop_up3').draggable({'cancel':'#modalBody3, .modalFooter', containment:'parent', scroll:false});
+        $('#element_to_pop_up4').draggable({'cancel':'#modalBody4, .modalFooter', containment:'parent', scroll:false});
+        $('#element_to_pop_up5').draggable({'cancel':'#modalBody5, .modalFooter', containment:'parent', scroll:false}); // containment:'parent'
 
 
       });
     </script>
   </head>
-  <body>
+
+  <div id="calendarBody">
     <div class="employeeCheckBoxDiv">
       <ul>
         <li><span>업무</span><span><input id="employeestatusCheckBox1"  type="checkbox" checked value = 1></li>
@@ -650,139 +699,138 @@
     <!--달력 div-->
     <div id='calendar'></div>
 
-    <div id="element_to_pop_up">
-      <header class="modalHeader">
-        <h2 class="title">일정등록</h2>
-        <a class="b-close">닫기</a>
-      </header>
-      <section class="popup1_body">
-        <form id="newScheduleForm" method="POST">
-          <div class="saveButtonDiv">
-            <ul>
-              <li><input type="submit" value="저장"></li>
-            </ul>
-          </div>
-          <article>
-            <table class="newScheduleTable">
-              <tbody>
-                <input type="text" name="newScheduleNo" hidden value="0">
-                <tr><th>제목</th><td><input style="width:100%;height:100%;vertical-align:middle;border:1px;padding:0px;" type="text" name="newScheduleTitle" title="제목" required></td></tr>
-                <tr><th>일정</th>
-                  <td>
-                    <select id="statusBox" style="width:100%;vertical-align: middle;" name="newScheduleStatus">
-                      <option value="1" class="employeeStatus">업무</option>
-                      <option value="2" class="employeeStatus">출장</option>
-                      <option value="3" class="employeeStatus">연차</option>
-                      <option value="4" class="departmentStatus">팀</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr><th>일정시간</th>
-                  <td>
-                    <ul class="timeList">
-                      <li><input type="date" name="newScheduleStartDate"></li>
-                      <li><input type="time" name="newScheduleStartTime"></li>
-                      <li><label>~</label></li>
-                      <li><input type="date" name="newScheduleEndDate"></li>
-                      <li><input type="time" name="newScheduleEndTime"></li>
-                    </ul>
-                  </td>
-                </tr>
-                <tr><th>내용</th><td><textarea id="textarea" style="width:100%;vertical-align:middle;padding:0px" name="newScheduleContent" rows="5" maxlength="500" title="내용"></textarea></td></tr>
-                <!-- <tr><th>장소</th><td><input style="width:100%;vertical-align: middle;" type="text" name="newSchedulePlace" title="장소"></td></tr> -->
-                <tr><th>첨부파일</th><td><input type="file" name="uploadFile" title="첨부파일"></td></tr>
-                <tr hidden><td><input type="text" name="prevFileName"></td></tr>
-              </tbody>
-            </table>
-          </article>
-        </form>
-      </section>
-    </div>
-
-    <div id="element_to_pop_up2">
-      <header class="modalHeader">
-        <h2 class="title">일정조회</h2>
-        <a class="b-close">닫기</a>
-      </header>
-      <section class="popup2_body">
-          <div class="buttonDiv">
-            <ul>
-              <li><input type="button" value="삭제" class="deleteButton"></li>
-              <li><input type="button" value="수정" class="updateButton"></li>
-            </ul>
-          </div>
-          <article>
-            <table class="ScheduleTable">
-              <tbody>
-                <span class="trigger" hidden value="0"></span>
-                <span class="scheduleNo" hidden value="0"></span>
-                <span class="filePath" hidden value=""></span>
-                <tr><th>제목</th><td><div style="width:380px;vertical-align: middle;" class="scheduleTitle">제목 텍스트</div></td></tr>
-                <tr><th>작성자</th><td><div class="scheduleCreateEmployee">작성자</div></td></tr>
-                <tr><th>내용</th><td><pre style="width:100%;vertical-align: middle;" class="scheduleContent"></pre></td></tr>
-                <tr id="departmentViewTable" style="display:none"><th>부서</th><td><div class="scheduleDepartment">없음</div></td></tr>
-                <tr><th>일정</th><td><span></span><span class="scheduleStatus"></span></td></tr>
-                <tr><th>일정시간</th><td><div class="scheduleTime">시간</div></td></tr>
-                <tr><th>첨부파일</th><td><div class="scheduleFile">없음</div></td></tr>
-              </tbody>
-            </table>
-          </article>
-      </section>
-    </div>
-
-    <div id="element_to_pop_up3">
-      <header class="modalHeader">
-        <h3 class="title" style="padding:0px;">삭제</h2>
-        <a class="b-close">닫기</a>
-      </header>
-      <section class="popup3_body">
-        <div style="height:100%;">
-          정말 삭제하시겠습니까?
-        </div>
-      </section>
-      <footer>
-        <li style="height:100%;list-style-type:none;float:right;margin:5px;"><input type="button" value="삭제" id="deleteOK"></li>
-      </footer>
-    </div>
-
-    <div id="element_to_pop_up4">
-      <header class="modalHeader">
-        <h2 class="title">정보</h2>
-      </header>
-      <section class="popup4_body">
-        <div style="height:100%;">
-          정상적으로 삭제 되었습니다.
-        </div>
-      </section>
-      <footer>
-        <li style="list-style-type:none;float:right;margin:5px;"><input type="button" value="확인" id="deleteConform"></li>
-      </footer>
-    </div>
-
-    <div id="element_to_pop_up5">
-      <header class="modalHeader">
-        <h2 class="title">삭제실패</h2>
-      </header>
-      <section class="popup5_body">
-        <div style="height:100%;">
-          오류가 발생해 삭제가 완료되지 않았습니다.
-        </div>
-      </section>
-      <footer>
-        <li style="list-style-type:none;float:right;margin:5px;"><input type="button" value="확인" id="deleteError"></li>
-      </footer>
-    </div>
-
-    
-
     <div class="departmentCheckBoxDiv">
-      <ul style="float:left">
-        <li><span><input id="departmentStatusCheckBox1" type="checkbox" checked value = 1000><span>영업팀</span></li>
-        <li><span><input id="departmentStatusCheckBox2" type="checkbox" checked value = 2000><span>총무팀</span></li>
-        <li><span><input id="departmentStatusCheckBox3" type="checkbox" checked value = 3000><span>자료관리팀</span></li>
-        <li><span><input id="departmentStatusCheckBox4" type="checkbox" checked value = 4000><span>사업관리팀</span></li>
-        <li><span><input id="departmentStatusCheckBox5" type="checkbox" checked value = 5000><span>모바일팀</span></li>
+      <ul>
+        <li><div class="deptDiv"><input id="departmentStatusCheckBox1" type="checkbox" checked value = 1000><span>영업팀</span><img src="./img/영업팀.png" class="deptColorLine"></div></li>
+        <li><div class="deptDiv"><input id="departmentStatusCheckBox2" type="checkbox" checked value = 2000><span>총무팀</span><img src="./img/총무팀.png" class="deptColorLine"></div></li>
+        <li><div class="deptDiv"><input id="departmentStatusCheckBox3" type="checkbox" checked value = 3000><span>자료관리팀</span><img src="./img/자료관리팀.png" class="deptColorLine"></div></li>
+        <li><div class="deptDiv"><input id="departmentStatusCheckBox4" type="checkbox" checked value = 4000><span>사업관리팀</span><img src="./img/사업관리팀.png" class="deptColorLine"></div></li>
+        <li><div class="deptDiv"><input id="departmentStatusCheckBox5" type="checkbox" checked value = 5000><span>모바일팀</span><img src="./img/모바일팀.png" class="deptColorLine"></div></li>
       </ul>
     </div>
-  </body>
+  </div>
+
+  <div id="element_to_pop_up">
+    <header class="modalHeader">
+      <h2 class="title">일정등록</h2>
+      <a class="b-close" id="modalClose1">닫기</a>
+    </header>
+    <section class="modalBody" id="modalBody1">
+      <form id="newScheduleForm" method="POST">
+        <div class="saveButtonDiv">
+          <ul>
+            <li><input type="submit" value="저장" class="saveButton"></li>
+          </ul>
+        </div>
+        <article class=scheduleArticle>
+          <table class="newScheduleTable">
+            <tbody>
+              <input type="text" name="newScheduleNo" hidden value="0">
+              <tr><th>제목</th><td><input style="width:100%;height:100%;border:1px;padding:0px;" type="text" name="newScheduleTitle" maxlength="100" title="제목" required></td></tr>
+              <tr><th>일정</th>
+                <td>
+                  <select id="statusBox" style="width:100%;height:100%;" name="newScheduleStatus">
+                    <option value="1" class="employeeStatus">업무</option>
+                    <option value="2" class="employeeStatus">출장</option>
+                    <option value="3" class="employeeStatus">연차</option>
+                    <option value="4" class="departmentStatus">팀</option>
+                  </select>
+                </td>
+              </tr>
+              <tr><th>일정시간</th>
+                <td>
+                  <ul class="timeList">
+                    <li><input type="date" name="newScheduleStartDate"></li>
+                    <li><input type="time" name="newScheduleStartTime"></li>
+                    <li><label>~</label></li>
+                    <li><input type="date" name="newScheduleEndDate"></li>
+                    <li><input type="time" name="newScheduleEndTime"></li>
+                  </ul>
+                </td>
+              </tr>
+              <tr><th>내용</th><td><textarea id="textarea" style="width:100%;height:100%;padding:0px;" name="newScheduleContent" rows="7" maxlength="500" title="내용"></textarea></td></tr>
+              <!-- <tr><th>장소</th><td><input style="width:100%;vertical-align: middle;" type="text" name="newSchedulePlace" title="장소"></td></tr> -->
+              <tr><th>첨부파일</th><td><input type="file" name="uploadFile" title="첨부파일"></td></tr>
+              <tr hidden><td><input type="text" name="prevFileName"></td></tr>
+            </tbody>
+          </table>
+        </article>
+      </form>
+    </section>
+  </div>
+
+  <div id="element_to_pop_up2">
+    <header class="modalHeader">
+      <h2 class="title" id="title2">일정조회</h2>
+      <a class="b-close" id="modalClose2">닫기</a>
+    </header>
+    <section class="modalBody" id="modalBody2">
+        <div class="buttonDiv">
+          <ul id="modalUl2">
+            <li><input type="button" value="삭제" class="deleteButton"></li>
+            <li><input type="button" value="수정" class="updateButton"></li>
+          </ul>
+        </div>
+        <article class=scheduleArticle>
+          <table class="scheduleTable">
+            <tbody>
+              <span class="trigger" hidden value="0"></span>
+              <span class="scheduleNo" hidden value="0"></span>
+              <span class="filePath" hidden value=""></span>
+              <tr><th>제목</th><td><div style="width:380px;vertical-align: middle;" class="scheduleTitle">제목 텍스트</div></td></tr>
+              <tr><th>작성자</th><td><div class="scheduleCreateEmployee">작성자</div></td></tr>
+              <tr><th>내용</th><td><pre style="width:100%;overflow:auto;white-space: pre-wrap;vertical-align:middle;" class="scheduleContent"></pre></td></tr>
+              <tr id="departmentViewTable" style="display:none"><th>부서</th><td><img id="scheduleDepartmentColorLine"><span class="scheduleDepartment"></span></td></tr>
+              <tr><th>일정</th><td><img id="scheduleColorLine"><span class="scheduleStatus"></span></td></tr>
+              <tr><th>일정시간</th><td><div class="scheduleTime">시간</div></td></tr>
+              <tr><th>첨부파일</th><td><div class="scheduleFile">없음</div></td></tr>
+            </tbody>
+          </table>
+        </article>
+    </section>
+  </div>
+
+  <div id="element_to_pop_up3">
+    <header class="modalHeader" >
+      <h3 class="title" style="padding:0px;">삭제</h2>
+      <a class="b-close" id="modalClose3">닫기</a>
+    </header>
+    <section class="modalBody" id="modalBody3">
+      <div style="height:100%;">
+        정말 삭제하시겠습니까?
+      </div>
+    </section>
+    <footer class="modalFooter">
+      <li style="list-style-type:none;float:right;margin:5px;"><input type="button" value="취소" class="b-close"></li>
+      <li style="list-style-type:none;float:right;margin:5px;"><input type="button" value="삭제" id="deleteOK"></li>
+    </footer>
+  </div>
+
+  <div id="element_to_pop_up4">
+    <header class="modalHeader" id="modalHeader4">
+      <h2 class="title">정보</h2>
+    </header>
+    <section class="modalBody" id="modalBody4">
+      <div style="height:100%;">
+        정상적으로 삭제 되었습니다.
+      </div>
+    </section>
+    <footer class="modalFooter">
+      <li style="list-style-type:none;float:right;margin:5px;"><input type="button" value="확인" id="deleteConform"></li>
+    </footer>
+  </div>
+
+  <div id="element_to_pop_up5">
+    <header class="modalHeader" id="modalHeader5">
+      <h2 class="title">삭제실패</h2>
+    </header>
+    <section class="modalBody" id="modalBody5">
+      <div style="height:100%;">
+        오류가 발생해 삭제가 완료되지 않았습니다.
+      </div>
+    </section>
+    <footer class="modalFooter">
+      <li style="list-style-type:none;float:right;margin:5px;"><input type="button" value="확인" id="deleteError"></li>
+    </footer>
+  </div>
 </html>

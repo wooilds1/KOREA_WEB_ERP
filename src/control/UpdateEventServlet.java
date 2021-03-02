@@ -101,6 +101,7 @@ public class UpdateEventServlet extends HttpServlet {
 				service.modify(es);
 			}else {
 				dservice.modify(ds);
+				map.put("dept_id", emp_vo.getD().getDept_id());
 			}
 			list.add(map);
 			out.print(mapper.writeValueAsString(list));

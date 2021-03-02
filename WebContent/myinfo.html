@@ -19,9 +19,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script>
 	$(function() {
-		//DOM트리에서 메뉴객체들 모두찾기
-        var $EmployeeObj = $("body>div.myinfo>table>tr>td>input[type=text]");
-        var url="./myinfo";
+		var url="./myinfo";
 		var method ="get";
 		$.ajax({
     		url: url,
@@ -54,7 +52,6 @@
         		alert("수정취소되었습니다");
         		return false;
         	}
-        	var $EmployeeUpdateObj = $("body>div.myinfo>table>tr>td>input[type=text]");
         	var url="./myinfoupdate";
 			var method ="get";
 			var data = $('input').serialize();
@@ -91,11 +88,11 @@
                 <!-- <td><input type="submit" class="update" value="사진 변경"></td> -->
             </tr>
                 <th class="myInfoLabel">Email</th>
-                <td><input type="text" id="email" ><br></td>
+                <td><input type="text" id="email" name="email"><br></td>
                 <!--<td><input type="submit" class="update" value="이메일 변경"></td> -->
             <tr>
                 <th class="myInfoLabel">휴대전화</th>
-                <td><input type="text" id="hpPhone" ></td>
+                <td><input type="text" id="hpPhone"  name="hpPhone"></td>
                 <!--<td><input type="submit" class="update" value="휴대전화 변경" ></td> -->
             </tr>
             <tr>
@@ -104,7 +101,7 @@
             </tr>
             <tr>
                 <th class="myInfoLabel">주소</th>
-                <td><input type="text" id="address" ></td>
+                <td><input type="text" id="address" name="address"></td>
                 <td><input type="submit" class="update" value="변경" font-size="50px"></td>
             </tr>
         </table>

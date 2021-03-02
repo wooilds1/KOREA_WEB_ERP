@@ -240,6 +240,14 @@ public class EmployeeScheduleDAOOracle implements EmployeeScheduleDAO {
 			throw new ModifyException("일정 수정 실패 : 이유=" + e.getMessage());
 		}
 		
+		EmployeeSchedule oldes = null;
+		try {
+			 oldes = selectByNo(es.getEmp_schedule_no());
+		} catch (FindException e1) {
+			throw new ModifyException(e1.getMessage());
+		}
+		
+		
 		String updateSQL = "UPDATE EMPLOYEE_SCHEDULE SET ";
 		String updateSQLSet = "";
 		String updateSQL1 = "WHERE EMP_SCHEDULE_NO='" + es.getEmp_schedule_no() + "'";
@@ -247,18 +255,22 @@ public class EmployeeScheduleDAOOracle implements EmployeeScheduleDAO {
 		try {
 			stmt = con.createStatement();
 			boolean flag = false;
-			if(es.getEmp_content() != null && !es.getEmp_content().equals("")) {
+			if(oldes.getEmp_content() == null) {
+				oldes.setEmp_content("");
+			}
+								
+			if(!es.getEmp_content().equals(oldes.getEmp_content())) {
 				updateSQLSet = "EMP_CONTENT='" + es.getEmp_content() +"' ";
 				flag = true;
 			}
-			if(es.getEmp_title() != null && !es.getEmp_title().equals("")) {
+			if(es.getEmp_title() != null && !es.getEmp_title().equals("") && !es.getEmp_title().equals(oldes.getEmp_title())) {
 				if(flag) {
 					updateSQLSet += ",";
 				}
 				updateSQLSet += "EMP_TITLE='" + es.getEmp_title() + "' ";
 				flag = true;
 			}
-			if(es.getEmp_task_start() != null) {
+			if(es.getEmp_task_start() != null && es.getEmp_task_start().getTime() != oldes.getEmp_task_start().getTime()) {
 				if(flag) {
 					updateSQLSet += ",";
 				}
@@ -267,7 +279,7 @@ public class EmployeeScheduleDAOOracle implements EmployeeScheduleDAO {
 								+ "','YYYY-MM-DD HH24:mi:ss') ";
 				flag = true;
 			}
-			if(es.getEmp_task_end() != null) {
+			if(es.getEmp_task_end() != null && es.getEmp_task_end().getTime() != oldes.getEmp_task_end().getTime()) {
 				if(flag) {
 					updateSQLSet += ",";
 				}
@@ -276,7 +288,7 @@ public class EmployeeScheduleDAOOracle implements EmployeeScheduleDAO {
 								+ "','YYYY-MM-DD HH24:mi:ss') ";
 				flag = true;
 			}
-			if(es.getEmp_task_status() != 0) {
+			if(es.getEmp_task_status() != 0 && es.getEmp_task_status() != oldes.getEmp_task_status()) {
 				if(flag) {
 					updateSQLSet += ",";
 				}
@@ -285,10 +297,12 @@ public class EmployeeScheduleDAOOracle implements EmployeeScheduleDAO {
 			}
 			
 			if(flag) {
+				System.out.println(updateSQL + updateSQLSet + updateSQL1);
 				stmt.executeUpdate(updateSQL + updateSQLSet + updateSQL1);
-			} else {
-				throw new ModifyException("일정 수정 실패!");
-			}
+			} 
+//			else {
+//				throw new ModifyException("일정 수정 실패!");
+//			}
 		} catch (SQLException e) {
 			throw new ModifyException(e.getMessage());
 		} finally {
