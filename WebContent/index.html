@@ -187,7 +187,9 @@ body>header>div>span>input {
 }
 </style>
 
-<!--jquery사용-->
+
+
+<script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
 
 <script>
 	$(function() { //HTML작업 이후 페이지가 뜨자마자 시작될 함수 
@@ -198,7 +200,7 @@ body>header>div>span>input {
 			method : "get",
 			/*  data : {'id' : loginedId}, */
 			success : function(responseObj) {
-				console.log(responseObj.starttime);
+				//console.log(responseObj.starttime);
 				$("#name").val(responseObj.name); //"#name".val의 값을 responseObj.name으로 가져온 값으로 넣어라. 
 				$("#starttime").val(responseObj.starttime); //출근값 넣기 
 				$("#endtime").val(responseObj.endtime);
@@ -221,7 +223,7 @@ body>header>div>span>input {
 				/*  data: {'id': loginedId}, */
 				success : function(responseObj) {
 					//alert("퇴근버튼 클릭됨.");
-					console.log(responseObj.endtime);
+					//console.log(responseObj.endtime);
 					$("#endtime").val(responseObj.endtime);
 				},
 				error : function(jqXHR) {
@@ -264,7 +266,9 @@ body>header>div>span>input {
 				url : hrefValue,
 				method : 'get',
 				success : function(responseObj) { //성공응답
-					location.href = "http://localhost:8888/KOREA_WEB_ERP";
+					localStorage.clear();
+					location.href ="./login.html";
+					//location.href = "http://localhost:8888/KOREA_WEB_ERP";
 				},
 				error : function(jqXHR) { //실패응답
 					alert("AJAX요청응답 실패: 에러코드=" + jqXHR.status);
