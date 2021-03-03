@@ -70,7 +70,7 @@ public class BoardServlet extends HttpServlet {
 		//기본적으로 보여줄 페이지
 			try {
 				boardList = service.findBoardPage(thisPage, cnt_per_pagegroup);
-				System.out.println(boardList);
+				//System.out.println(boardList);
 				
 				//jackson 라이브러리 사용해서 map의 내용을 json형태로 응답하기
 				ObjectMapper mapper = new ObjectMapper(); //jackson 라이브러리 mapper 객체 생성
@@ -100,7 +100,7 @@ public class BoardServlet extends HttpServlet {
 				map2.put("list", list);
 				
 				out.print(mapper.writeValueAsString(map2));
-				System.out.println(list);
+				//System.out.println(list);
 		
 			} catch (FindException e) {//boardList = service.findBoardPaging() 끝
 	 

@@ -25,7 +25,7 @@ public class BoardRemoveServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("remove servlet-0");
+		//System.out.println("remove servlet-0");
 		response.setContentType("application/json;charset=UTF-8");
 		
 		HttpSession session = request.getSession();
@@ -41,7 +41,7 @@ public class BoardRemoveServlet extends HttpServlet {
 		try {
 
 			service.removeBoard(board_no, loginedId);
-			System.out.println("remove servlet-1 : boardNum=" + boardNum);
+			//System.out.println("remove servlet-1 : boardNum=" + boardNum);
 //			String path = "./board.html";
 //			RequestDispatcher rd = request.getRequestDispatcher(path);
 //			rd.forward(request, response);

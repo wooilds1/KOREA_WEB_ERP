@@ -120,7 +120,7 @@ public class UpdateEventServlet extends HttpServlet {
 		try {
 			if(Istatus != 4) {
 				service.modify(es);
-				if(Istatus == 3) {
+				if(Istatus == 3 && es.getEmp_task_status() != Istatus) {
 					service.modifyAnnualLeave(emp_vo.getA(), use_day);
 				}
 			}else {
