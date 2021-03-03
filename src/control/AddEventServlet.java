@@ -69,6 +69,27 @@ public class AddEventServlet extends HttpServlet {
 		String ed = mr.getParameter("newScheduleEndDate");
 		String et = mr.getParameter("newScheduleEndTime");
 		String edt = ed+" "+et;
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+        // date1, date2 두 날짜를 parse()를 통해 Date형으로 변환.
+        Date FirstDate = null;
+        Date SecondDate = null;
+		try {
+			FirstDate = format.parse(sd);
+			SecondDate = format.parse(ed);
+		} catch (ParseException e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
+		}
+        
+        long calDate = FirstDate.getTime() - SecondDate.getTime();
+        
+        long calDateDays = calDate / ( 24*60*60*1000);
+        
+        calDateDays = Math.abs(calDateDays);
+        
+		int use_day = (int)calDateDays + 1;
+
 		Date EndDate = null;
 		try {
 			StartDate = df.parse(sdt);
@@ -100,6 +121,10 @@ public class AddEventServlet extends HttpServlet {
 		try {
 			if(Istatus != 4) {
 				scheduleNo = service.add(es);
+				if(Istatus == 3) {
+				
+					service.modifyAnnualLeave(emp_vo.getA(), use_day);
+				}
 			}else {
 				scheduleNo = dservice.add(ds);
 				map.put("dept_id", emp_vo.getD().getDept_id());

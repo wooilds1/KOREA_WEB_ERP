@@ -42,6 +42,7 @@ public class BoardServlet extends HttpServlet {
 		
 		
 		try {
+
 			int totalData; //게시글의 총 갯수
 			int cnt_per_page = 10; //한페이지에 보여줄 목록수
 			int startPage = 1; //시작페이지값
@@ -68,17 +69,8 @@ public class BoardServlet extends HttpServlet {
 		
 		//기본적으로 보여줄 페이지
 			try {
-				boardList = service.findBoardPage(thisPage, cnt_per_page ); //페이징 1페이지당 10개씩
-				
-				
-//				if(boardList == null || boardList.size() == 0) { //게시판이 null값이거나 하나도 없다면
-//					out.print("{\"status\": -1}");
-//					System.out.println("if문 status입니다");
-//					return;
-//				}
-//
-//				System.out.println("게시글이 있는 경우입니다");
-				
+				boardList = service.findBoardPage(thisPage, cnt_per_pagegroup);
+				System.out.println(boardList);
 				
 				//jackson 라이브러리 사용해서 map의 내용을 json형태로 응답하기
 				ObjectMapper mapper = new ObjectMapper(); //jackson 라이브러리 mapper 객체 생성
@@ -108,7 +100,7 @@ public class BoardServlet extends HttpServlet {
 				map2.put("list", list);
 				
 				out.print(mapper.writeValueAsString(map2));
-				System.out.println(mapper.writeValueAsString(map2));
+				System.out.println(list);
 		
 			} catch (FindException e) {//boardList = service.findBoardPaging() 끝
 	 

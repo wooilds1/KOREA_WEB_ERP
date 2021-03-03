@@ -1,0 +1,328 @@
+
+<html>
+    <head>
+    	<meta charset="UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+        <style>
+
+            section > article > div.buttons{
+                float: right;
+            }
+
+        </style>
+
+<script>  
+function showContent(pord_no){
+
+        $.ajax({
+            url:'./boardcontent',
+            method:'get',
+            data : {"pord_no": pord_no}, //서버로 보낼 데이터 pord_no
+            //끝
+            success:function(responseObj){
+
+                var loginedId = localStorage.getItem('id');
+
+                if(responseObj.status==undefined){
+                  
+                    var $divDetailObj = $("div.board_detail");
+                   // var $divObj=$('<div class=board>');
+                    var $divObj =  $divDetailObj.find("div.board");
+                    var divData='<div class=boardTitle style="font-weight: bold; font-size:20px">';
+                    divData+=responseObj.board_title;
+                    divData+='</div>';
+                    divData+='<div class="boardWriterDate" style="font-size: 80%; float: right; color: slategray;">';
+
+                    divData+='<span>';
+                    divData+='작성자 ';
+                    divData+='</span>';
+
+                    divData+='<span class="boardWriter">';
+                    divData+=responseObj.emp_name;
+                    divData+='</span>';
+
+                    divData+='<span>';
+                    divData+='| 작성날짜'; 
+                    divData+='</span>';
+
+                    divData+='<span class="boardDate">';
+                    divData+=responseObj.board_date;
+                    divData+='</span>';
+
+                    divData+='<span>';
+                    divData+='| 글번호 ';
+                    divData+='</span>';
+
+                    divData+='<span id="boardno">';
+                    divData+=responseObj.board_no;
+                    divData+='</span>';
+
+                    divData+='</div>';
+
+                    divData+='<br><br>';
+
+                    divData+='<div class="boardcontent">';
+                    divData+=responseObj.board_content;
+                    divData+='</div>';
+                    divData+='</div>';
+
+                    $divObj.html(divData);
+                    var $divcommentObj=$('<div class=commentListdiv>');
+                    var tableData='<table class=commentList>';
+                    var arr=responseObj.commentList;
+
+
+                    $(arr).each(function(index,element){
+
+                        var bc_id=element.cemp_id;
+
+                        tableData += '<tr>';
+                        tableData += '<td  class="commentno">';
+                        tableData += element.cmt_no;
+                        tableData += '</td>';
+                        tableData += '<td  width="100" class="commentInfo" style="font-size: 80%;">';
+                        tableData += element.emp_name;
+                        tableData += '<br>';
+                        tableData += element.cmt_date;
+                        tableData += '</td>';
+                        tableData += '<td width="450">';
+                        tableData += '<input type="text" id="commentcontent_';
+                        tableData += element.cmt_no;
+                        tableData += '" value="';
+                        tableData += element.cmt_content;
+                        tableData += '" style="width:400px; height:50px; border:0cm; outline:none"  readonly >';
+                        tableData += '</td>';
+
+                        if(loginedId==bc_id){
+                            tableData += '<td>';
+                            tableData += '<input type="button" class="commentsave" id="modifysave_';
+                            tableData += element.cmt_no;
+                            tableData += '" value="저장" style="display: none;">';
+                            tableData += '<input type="button" class="commentmodify"  value="수정">';
+                            tableData += '<input type="button" class="commentdelete" value="삭제">';
+                            tableData += '</td>';
+                        }
+
+                        tableData += '</tr>';
+                        });
+
+                    $divcommentObj.html(tableData);
+
+                    $("div.comment").html($divcommentObj);
+
+                    $("section>article").append($divDetailObj);
+
+                    $("div.commnet_write textarea").val('');
+                    $("div.board_detail").show();
+                }
+
+            },
+            error: function(jqXHR){//실패응답
+                            alert("AJAX요청응답 실패 : 에러코드=" + jqXHR.status);
+                        }
+        });
+
+         //글목록으로 돌아가기 ///////////////////////////////////////////////////////////
+        var $backToListObj=$("input[class=backToList]");
+        $backToListObj.click(function(){
+            $("section>article").empty();
+            $("section>article").load("./board.html");
+        });
+        //글목록으로 돌아가기 끝 ///////////////////////////////////////////////////////////
+
+}
+    $(function(){
+
+        var pord_no = localStorage.getItem("pord_no");
+        showContent(pord_no);
+      
+
+        //1. 댓글등록ok/////////////////////////////////////////////////////////////////////////////////////////////
+        $("input.commentwrite").click(function(){
+            
+            var comValue=$("textarea[name=comment]").val();
+            var board_no=$("#boardno").text();
+            console.log(comValue+"&&"+board_no);
+           
+            if(confirm("댓글을 등록하시겠습니까?")==true){
+                $.ajax({
+                    url:"./commentadd",
+                    method: "post",
+                    data:{"comment":comValue,"board_no":board_no},
+                    success:function(data) {
+                        // $("section>article").empty();
+                        // $("section>article").load("./board_content.html");
+                        showContent(pord_no);
+                       
+                    },
+                    error:function(jqXHR){
+                        alert("에러:" +jqXHR.status);
+                    }
+               
+                });
+            }
+
+            return false;
+
+        });
+        ////1번끝//////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //2. 게시글목록으로 이동하기 ok///////////////////////////////////////////////////////////////////////
+        var $backToListObj=$("input[class=backToList]");
+        $backToListObj.click(function(){
+            $("section>article").empty();
+            $("section>article").load("./board.html");
+            return false;
+        });
+        ////2번끝//////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //3. 삭제 클릭시 > 삭제(ajax) > 글목록이동 ok///////////////////////////////////////////////////////
+
+            $("input.boarddelete").click(function(){
+            var board_no=$("#boardno").text();
+
+            if(confirm("정말 삭제하시겠습니까?")==true){
+                $.ajax({
+                    url:'./boardremove',
+                    method:'post',
+                    data:{"board_no":board_no},
+                    success:function(data){
+                        alert("ajax 삭제성공");
+                    },
+                    error:function(jqXHR){
+                        alert("에러:" +jqXHR.status);
+                    }
+                });
+                $("section>article").empty();
+                $("section>article").load("./board.html");
+                return false;
+
+                }  
+
+        });
+        ////3번끝//////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //4. 수정 클릭시 > 수정(ajax) /////////////////////////////////////////////////////////////////////////
+
+        var $modifyObj=$("input[class=boardmodify]");
+            $modifyObj.click(function(){
+            if(confirm("글을 수정하시겠습니까?")==true){
+            $("section>article").empty();
+            $("section>article").load("./board_modify.html");
+            return false;
+            }
+
+        });
+    ////4번끝/////////////////////////////////////////////////////////////////////////////////////////////
+
+    //5. 댓글수정클릭시 > 수정ajax> 해당댓글 반영하기 ok/////////////////////////////////////////
+        $(document).on("click",".commentmodify",function(event){
+
+            var comment_no=$(this).parent().siblings(".commentno").text();
+            var contentNum='#commentcontent_';
+            contentNum+=comment_no;
+            $(contentNum).attr("readonly",false);
+            $(contentNum).attr('style','outline:1px; width:400px; height:50px; ');
+
+            var saveNum='#modifysave_';
+            saveNum+=comment_no;
+            $(saveNum).attr('style','display:show; ');
+            console.log(comment_no);
+            return false;
+        });
+
+        $(document).on("click",".commentsave",function(event){
+
+            var comment_no = $(this).parent().siblings(".commentno").text();
+            console.log(comment_no);
+
+            var contentNum='#commentcontent_';
+            contentNum+=comment_no;
+            
+            var contentNum1='commentcontent_';
+            contentNum1+=comment_no;
+            console.log(contentNum1);
+            var content_text=document.getElementById(contentNum1).value;
+
+            var saveNum='#modifysave_';
+            saveNum+=comment_no;
+
+            if(confirm("현재 댓글을 수정하시겠습니까?")==true){
+                $.ajax({
+                    url:'./commentmodify',
+                    method:'post',
+                    data:{"comment_no":comment_no,"comment_content":content_text},
+                    success:function(){
+                            $(contentNum).val(content_text);
+                            $(contentNum).attr("readonly",true);
+                            $(saveNum).attr('style','display:none; ');
+                            $(contentNum).attr('style', 'outline:0px; border:0px; width:400px; height:50px');
+
+                    },
+                    error:function(jqXHR){
+                        alert("에러:" +jqXHR.status);
+                    }
+
+                });
+            } 
+            return false;
+        });
+
+
+    ////5번끝////////////////////////////////////////////////////////////////////////////////////////////
+
+    //6. 댓글 삭제 클릭시ok/////////////////////////////////////////////////////////////////////////////// 
+        $(document).on("click",".commentdelete",function(event){
+            var comment_no = $(this).parent().siblings(".commentno").text();
+
+            $.ajax({
+                url:'./commentremove',
+                method:'get',
+                data:{"comment_no":comment_no},
+                success:function(){
+                    if(confirm("현재댓글을 삭제하시겠습니까?")==true){
+                    alert("댓글삭제-0");
+                     showContent(pord_no);
+                     alert("댓글삭제-1");
+                    }  
+                },
+                error:function(jqXHR){
+                    alert("에러:" +jqXHR.status);
+                }
+
+            });
+            return false;
+        });
+    ////6번끝///////////////////////////////////////////////////////////////////////////////////////////
+    });
+    </script>
+    </head>
+       <div class="board_detail"  style="display: none;;">
+            <h1> 공지사항 </h1>
+            
+            <form name="form">
+                <div class="board">
+                </div>
+                <br><br>
+                <hr>
+                <div class="comment">
+                    댓글목록
+                    </div>
+                    <div class="commnet_write">
+                        <table>
+                            <td>
+                                <textarea name="comment" rows="4" cols="70" placeholder="댓글을 입력하세요"></textarea>
+                            </td>
+                            <td><input type="button" class="commentwrite" value="댓글등록"> </td>
+                        </table>
+                    <br>
+                </div>
+            </form>
+                <hr>
+                <div class="buttons">   
+                    <input type="button" class="boardmodify" value="수정" >
+                    <input type="button" class="boarddelete" value="삭제" >     
+                    <input type="button" class="backToList" value="글목록">
+                </div>
+       </div>
+</html>

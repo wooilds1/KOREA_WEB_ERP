@@ -77,6 +77,27 @@ public class UpdateEventServlet extends HttpServlet {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+        // date1, date2 두 날짜를 parse()를 통해 Date형으로 변환.
+        Date FirstDate = null;
+        Date SecondDate = null;
+		try {
+			FirstDate = format.parse(sd);
+			SecondDate = format.parse(ed);
+		} catch (ParseException e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
+		}
+        
+        long calDate = FirstDate.getTime() - SecondDate.getTime();
+        
+        long calDateDays = calDate / ( 24*60*60*1000);
+        
+        calDateDays = Math.abs(calDateDays);
+        
+		int use_day = (int)calDateDays + 1;
+		
 		String Content = mr.getParameter("newScheduleContent");
 		String prevFileName = mr.getParameter("prevFileName");
 		MyInfoService infoservice = new MyInfoServiceImpl();
@@ -99,6 +120,9 @@ public class UpdateEventServlet extends HttpServlet {
 		try {
 			if(Istatus != 4) {
 				service.modify(es);
+				if(Istatus == 3) {
+					service.modifyAnnualLeave(emp_vo.getA(), use_day);
+				}
 			}else {
 				dservice.modify(ds);
 				map.put("dept_id", emp_vo.getD().getDept_id());

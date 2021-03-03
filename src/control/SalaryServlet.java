@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,18 +28,22 @@ public class SalaryServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("application/json;charset=utf-8");
-			HttpSession session = request.getSession();
-			String logindId = (String)session.getAttribute("login");
+		//	HttpSession session = request.getSession();
+		//	
+		//	String logindId = (String)session.getAttribute("login");
 			PrintWriter out = response.getWriter();
+			String logindId = "20200002"; //로그인 페이지가 아직 없어서 임시생성
 			String start = request.getParameter("start");
 			String end = request.getParameter("end");
 			SalaryService service = new SalaryServiceImpl();
 			List<Salary> list2;
 
 			try {
+		
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
 				Date startDt = sdf.parse(start);
 				Date endDt = sdf.parse(end);
+			
 				//System.out.println("요청전달데이터를 날짜형식으로 변환:" + startDt + ":" + endDt);
 				list2 = service.findByTerm(startDt, endDt, logindId);
 				
@@ -56,7 +60,7 @@ public class SalaryServlet extends HttpServlet {
 				//총페이지수 
 				int totalPage = (int)Math.ceil((double)cnt/cnt_per_page);
 				
-				System.out.println("총건수:" + cnt + ", 총페이지수: " + totalPage);
+				//System.out.println("총건수:" + cnt + ", 총페이지수: " + totalPage);
 				
 				//페이지계산
 				int cnt_per_page_group =3;
@@ -73,8 +77,14 @@ public class SalaryServlet extends HttpServlet {
 				
 				for(Salary s: list2) {
 					Map<String,Object> map1 = new HashMap<>();
-					String dateFormatStringTime =sdf.format(s.getSalary_date());
-					map1.put("salary_date", dateFormatStringTime);
+//					String dateFormatStringTime =sdf.format(s.getSalary_date());
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(s.getSalary_date());
+					cal.add(Calendar.MONTH, 1);
+					
+					String dateFormatStringTime =sdf.format(cal.getTime());
+					
+					map1.put("salary_date", dateFormatStringTime);				
 				    map1.put("after_tax_salary", s.getAfter_tax_salary());
 				    map1.put("income_tax", s.getIncome_tax());
 				    map1.put("hire_insurance", s.getHire_insurance());
@@ -96,7 +106,7 @@ public class SalaryServlet extends HttpServlet {
 //				out.print(mapper.writeValueAsString(maplist));
 				out.print(mapper.writeValueAsString(map2));
 			
-				System.out.println("map for:" + mapper.writeValueAsString(map2));
+				//System.out.println("map for:" + mapper.writeValueAsString(map2));
 				
 				
 			} catch (FindException | ParseException e) {

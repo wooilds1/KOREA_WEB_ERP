@@ -2,10 +2,10 @@ package service;
 
 import java.util.List;
 
-import exception.AddException;
 import exception.FindException;
 import exception.ModifyException;
 import exception.RemoveException;
+import vo.AnnualLeave;
 import vo.EmployeeSchedule;
 
 public interface EmployeeScheduleService {
@@ -24,11 +24,19 @@ public interface EmployeeScheduleService {
 	
 	List<EmployeeSchedule> findAllByIdAndStatus(String emp_id, int status) throws FindException;
 	
+	AnnualLeave findAnnualLeaveById(String emp_id) throws FindException;
+	
+	
 	/**
 	 * 사원일정을 수정한다
 	 * @param es 변경될 사원일정객체
 	 */
 	void modify(EmployeeSchedule es) throws ModifyException;
+	
+	void modifyAnnualLeave(AnnualLeave a, int use_day) throws ModifyException;
+	
+	
+	
 	
 	/**
 	 * 접속한 사원의 사원번호와 일치하는 사원일정을 삭제한다

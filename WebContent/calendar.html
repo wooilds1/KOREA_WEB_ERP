@@ -34,9 +34,17 @@
     <script>
       $(function() {
         var loginedId = localStorage.getItem('id');
+        $.ajax({
+          url: "./annualleave",
+          success: function(responseObj){
+            localStorage.setItem("used_day", responseObj.used_day);
+          }
+        });
+
         var calendarEl = document.getElementById('calendar');
         // var statusArr = ["1","2","3"]; // 개인일정 1-업무, 2-출장, 3-연차
-        var checked = "1"; // 박스 체크 되었는지 (1이면 true 2면 false)
+        var checkedArr = ["1","1","1","1","1"]; // 박스 체크 되었는지 (1이면 true 2면 false)
+        var empcheckedArr = ["1","1","1"];
         var filepath = "";
         var filename = "";
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -131,7 +139,7 @@
                 $.ajax({
                   url:"./viewempevent",
                   // traditional : true, //배열값을 자바에 넘겨줄 수 있다
-                  data : {"status" : "1", "checked" : checked},
+                  data : {"status" : "1", "checked" : empcheckedArr[0]},
                   success : function(responseObj){
                     successCallback(responseObj);
                   },
@@ -145,7 +153,7 @@
               events : function(info, successCallback, failureCallback){ //개인일정
                 $.ajax({
                   url:"./viewempevent",
-                  data : {"status" : "2", "checked" : checked},
+                  data : {"status" : "2", "checked" : empcheckedArr[1]},
                   success : function(responseObj){
                     successCallback(responseObj);
                   },
@@ -159,7 +167,7 @@
               events : function(info, successCallback, failureCallback){ //개인일정
                 $.ajax({
                   url:"./viewempevent",
-                  data : {"status" : "3", "checked" : checked},
+                  data : {"status" : "3", "checked" : empcheckedArr[2]},
                   success : function(responseObj){
                     successCallback(responseObj);
                   },
@@ -173,7 +181,7 @@
               events : function(info, successCallback, failureCallback){ //부서일정
                 $.ajax({
                   url:"./viewdeptevent",
-                  data : {"dept_id" : "1000", "checked" : checked},
+                  data : {"dept_id" : "1000", "checked" : checkedArr[0]},
                   success : function(responseObj){
                     successCallback(responseObj);
                   },
@@ -187,7 +195,7 @@
               events : function(info, successCallback, failureCallback){ //부서일정
                 $.ajax({
                   url:"./viewdeptevent",
-                  data : {"dept_id" : "2000", "checked" : checked},
+                  data : {"dept_id" : "2000", "checked" : checkedArr[1]},
                   success : function(responseObj){
                     successCallback(responseObj);
                   },
@@ -201,7 +209,7 @@
               events : function(info, successCallback, failureCallback){ //부서일정
                 $.ajax({
                   url:"./viewdeptevent",
-                  data : {"dept_id" : "3000", "checked" : checked},
+                  data : {"dept_id" : "3000", "checked" : checkedArr[2]},
                   success : function(responseObj){
                     successCallback(responseObj);
                   },
@@ -215,7 +223,7 @@
               events : function(info, successCallback, failureCallback){ //부서일정
                 $.ajax({
                   url:"./viewdeptevent",
-                  data : {"dept_id" : "4000", "checked" : checked},
+                  data : {"dept_id" : "4000", "checked" : checkedArr[3]},
                   success : function(responseObj){
                     successCallback(responseObj);
                   },
@@ -229,7 +237,7 @@
               events : function(info, successCallback, failureCallback){ //부서일정
                 $.ajax({
                   url:"./viewdeptevent",
-                  data : {"dept_id" : "5000", "checked" : checked},
+                  data : {"dept_id" : "5000", "checked" : checkedArr[4]},
                   success : function(responseObj){
                     successCallback(responseObj);
                   },
@@ -279,7 +287,7 @@
             // });
           },
 
-          // 셀 한개가 클릭됬을 때
+          //셀 한개가 클릭됬을 때
           dateClick: function(info) { 
             $("#newScheduleForm")[0].reset();
             $(".trigger").val(0);
@@ -313,9 +321,9 @@
               modalClose: false,
             });
           },
-          // 셀 한개 클릭 끝
+          //셀 한개 클릭 끝
 
-          //셀을 여러개 선택했을 때
+          //셀을 한개 혹은 여러개 선택했을 때
           select: function(info) {
             $("#newScheduleForm")[0].reset();
             $(".trigger").val(0);
@@ -331,15 +339,15 @@
             }else{
               endHours = d.getHours()+2
             }
-            if((info.end.getMonth()+1)<10){
-              var endMonth = '0'+(info.end.getMonth()+1);
+            if((info.end.getUTCMonth()+1)<10){
+              var endMonth = '0'+(info.end.getUTCMonth()+1);
             }else{
-              endMonth = info.end.getMonth()+1
+              endMonth = info.end.getUTCMonth()+1
             }
-            if((info.end.getDate()-1)<10){
-              var endDate = '0'+(info.end.getDate()-1);
+            if((info.end.getUTCDate())<10){
+              var endDate = '0'+(info.end.getUTCDate());
             }else{
-              endDate = info.end.getDate()-1;
+              endDate = info.end.getUTCDate();
             }
             if(startHours >= 24){
               startHours -= 24;
@@ -361,7 +369,7 @@
               modalClose: false,
             });
           },
-          // 셀 여러개 선택 끝
+          // 셀 선택 끝
 
           // 이벤트 클릭됬을 때
           eventClick: function(info){ 
@@ -468,6 +476,11 @@
             var endDate = $("input[name=newScheduleEndDate]").val();
             var correctTime = false;
             var titleCheck = false;
+            var annualCheck = true;
+
+            var sdt = new Date(startDate);
+            var edt = new Date(endDate);
+            var dateDiff = Math.ceil((edt.getTime()-sdt.getTime())/(1000*3600*24));
 
             if(title.trim() != ''){
               titleCheck = true;
@@ -483,7 +496,13 @@
               }
             }
 
-            if(correctTime && titleCheck){ //시간조건 , 제목비어있는지 확인
+            if($("#statusBox option:selected").val() == 3){
+              if(localStorage.getItem('used_day') < (dateDiff+1)){
+                annualCheck = false;
+              }
+            }           
+
+            if(correctTime && titleCheck && annualCheck){ //시간조건 , 제목비어있는지 확인
               if($(".trigger").val() == 0){ // 그냥 저장버튼 눌렀을 때
                 $.ajax({
                   url: "./addevent",
@@ -541,6 +560,8 @@
                 $("input[name=newScheduleTitle]").focus();
               } else if(!correctTime){
                 alert("종료시간이 시작시간보다 빠릅니다");
+              } else if(!annualCheck){
+                alert("연차일수가 모자랍니다");
               }
             return false;
           });
@@ -656,10 +677,22 @@
         $("div.employeeCheckBoxDiv input[type=checkbox]").change(function(event){
           if($(event.target).prop("checked")){
             // statusArr.splice($(event.target).val()-1,0,$(event.target).val());
-            checked = "1";
+            if($(event.target).val() == 1){
+              empcheckedArr[0] = "1";
+            }else if($(event.target).val() == 2){
+              empcheckedArr[1] = "1";
+            }else if($(event.target).val() == 3){
+              empcheckedArr[2] = "1";
+            }
           }else{
             // statusArr.splice(status.includes($(event.target).val()),1);
-            checked = "2";
+            if($(event.target).val() == 1){
+              empcheckedArr[0] = "2";
+            }else if($(event.target).val() == 2){
+              empcheckedArr[1] = "2";
+            }else if($(event.target).val() == 3){
+              empcheckedArr[2] = "2";
+            }
           }
           calendar.getEventSourceById($(event.target).val()).refetch();
           return false;        
@@ -673,9 +706,29 @@
           if($(event.target).prop("checked")){
             // calendar.addEventSource( source )
             // eventSource.addEvent(eventArr, calendar.getEventSourceById($(event.target).val()));
-            checked = "1";
+            if($(event.target).val() == 1000){
+              checkedArr[0] = "1";
+            }else if($(event.target).val() == 2000){
+              checkedArr[1] = "1";
+            }else if($(event.target).val() == 3000){
+              checkedArr[2] = "1";
+            }else if($(event.target).val() == 4000){
+              checkedArr[3] = "1";
+            }else if($(event.target).val() == 5000){
+              checkedArr[4] = "1";
+            }
           }else{
-            checked = "2";
+            if($(event.target).val() == 1000){
+              checkedArr[0] = "2";
+            }else if($(event.target).val() == 2000){
+              checkedArr[1] = "2";
+            }else if($(event.target).val() == 3000){
+              checkedArr[2] = "2";
+            }else if($(event.target).val() == 4000){
+              checkedArr[3] = "2";
+            }else if($(event.target).val() == 5000){
+              checkedArr[4] = "2";
+            }
           }
           eventSource.refetch();
           return false;

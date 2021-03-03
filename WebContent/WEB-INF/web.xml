@@ -115,17 +115,6 @@
   </servlet-mapping>
   <servlet>
     <description></description>
-    <display-name>BoardServlet</display-name>
-    <servlet-name>BoardServlet</servlet-name>
-    <servlet-class>control.BoardServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>BoardServlet</servlet-name>
-    <url-pattern>/board</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <description></description>
     <display-name>salaryServlet</display-name>
     <servlet-name>salaryServlet</servlet-name>
     <servlet-class>control.SalaryServlet</servlet-class>
@@ -154,4 +143,94 @@
 		<servlet-name>MyInfoUpdateServlet</servlet-name>
 		<url-pattern>/myinfoupdate</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<description></description>
+		<display-name>AnnualLeaveServlet</display-name>
+		<servlet-name>AnnualLeaveServlet</servlet-name>
+		<servlet-class>control.AnnualLeaveServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AnnualLeaveServlet</servlet-name>
+		<url-pattern>/annualleave</url-pattern>
+	</servlet-mapping>
+	<servlet>
+    <description></description>
+    <display-name>BoardServlet</display-name>
+    <servlet-name>BoardServlet</servlet-name>
+    <servlet-class>control.BoardServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BoardServlet</servlet-name>
+    <url-pattern>/board</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>BoardWriteServlet</display-name>
+    <servlet-name>BoardWriteServlet</servlet-name>
+    <servlet-class>control.BoardWriteServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BoardWriteServlet</servlet-name>
+    <url-pattern>/boardwrite</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>BoardContentServlet</display-name>
+    <servlet-name>BoardContentServlet</servlet-name>
+    <servlet-class>control.BoardContentServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BoardContentServlet</servlet-name>
+    <url-pattern>/boardcontent</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CommentAddServlet</display-name>
+    <servlet-name>CommentAddServlet</servlet-name>
+    <servlet-class>control.CommentAddServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CommentAddServlet</servlet-name>
+    <url-pattern>/commentadd</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>BoardModifyServelt</display-name>
+    <servlet-name>BoardModifyServelt</servlet-name>
+    <servlet-class>control.BoardModifyServelt</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BoardModifyServelt</servlet-name>
+    <url-pattern>/boardmodify</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>BoardRemoveServlet</display-name>
+    <servlet-name>BoardRemoveServlet</servlet-name>
+    <servlet-class>control.BoardRemoveServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BoardRemoveServlet</servlet-name>
+    <url-pattern>/boardremove</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CommentModifyServlet</display-name>
+    <servlet-name>CommentModifyServlet</servlet-name>
+    <servlet-class>control.CommentModifyServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CommentModifyServlet</servlet-name>
+    <url-pattern>/commentmodify</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>CommentRemoveServlet</display-name>
+    <servlet-name>CommentRemoveServlet</servlet-name>
+    <servlet-class>control.CommentRemoveServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CommentRemoveServlet</servlet-name>
+    <url-pattern>/commentremove</url-pattern>
+  </servlet-mapping>
 </web-app>

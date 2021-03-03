@@ -47,7 +47,7 @@ public class MyInfoServlet extends HttpServlet {
 			map.put("address",e.getAddress());
 			map.put("employeeId",e.getEmp_id());
 			map.put("position",e.getPosition());
-			map.put("applyDays",e.getA().used_day+" / "+e.getA().max_day);
+			map.put("applyDays",e.getA().getUsed_day()+" / "+e.getA().getMax_day());
 			map.put("departmentName",e.getD().getDept_name());
 			String hireDate =dateFormat.format(e.getHire_date());
 			map.put("hireDate",hireDate);

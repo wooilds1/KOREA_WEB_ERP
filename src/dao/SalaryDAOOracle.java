@@ -3,9 +3,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 import exception.FindException;
 import sql.MyConnection;
@@ -204,70 +208,7 @@ public class SalaryDAOOracle implements SalaryDAO{
 			MyConnection.close(con,pstmt,rs);
 		}
 	}
-//	public static void main(String[] args) {
-//		    SalaryDAOOracle dao = new SalaryDAOOracle(); 
-//		    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-//		    String start = "2020-01";
-//		    String end = "2020-12";
-//		    String id = "20200002";
-//		    try {
-//			    Date startDt = sdf.parse(start);
-//				Date endDt = sdf.parse(end);
-//				int cnt = dao.selectCntByTerm(startDt, endDt, id);
-//				System.out.println(cnt);
-//		    }catch(Exception e) {
-//		    	e.printStackTrace();
-//		    }
-//		    
-//		    try {
-//			    Date startDt = sdf.parse(start);
-//				Date endDt = sdf.parse(end);
-//				System.out.println("요청전달데이터를 날짜형식으로 변환:" + startDt + ":" + endDt);	
-//				List<Salary> list = dao.selectByTerm(startDt, endDt, 1, 4, "20200002");	
-//				for(Salary s: list) {
-//					System.out.println(s);
-//				}
-//		    }catch(Exception e) {
-//		    	e.printStackTrace();
-//		    }
-		      
-//		      Date date1 = null;
-//			  Date date2 = null;
-//				
-//				
-//		      //사원조회
-//			  String str_date1="2020-01";
-//	          String str_date2="2020-12";
-//	          DateFormat formatter =new SimpleDateFormat("yyyy-MM");
-		     
-//			    try {
-//					date1 = (Date)formatter.parse(str_date1);
-//					date2 = (Date)formatter.parse(str_date2);
-//				} catch (ParseException e) {
-//					e.printStackTrace();
-//				}
-//			    
-//			   List<Salary> listtest = new ArrayList<>();
-//			   try {
-//				listtest= dao.selectByTerm(date1,date2, "20200002");
-//				int num1=dao.selectPageNum(date1,date2, "20200002");
-//			    for(Salary salvo:listtest) {
-//			    	System.out.print("일자"+salvo.getSalary_date());
-//			    	System.out.print(",세후"+salvo.getAfter_tax_salary());
-//			    	System.out.print(",icome_tax"+salvo.getIncome_tax());
-//			    	System.out.print(",Hire_insurance"+salvo.getHire_insurance());
-//			    	System.out.print(",Total_deduction"+salvo.getTotal_deduction());
-//			    	System.out.print(",Extra_pay"+salvo.getExtra_pay());
-//			    	System.out.print(",Position_pay"+salvo.getPosition_pay());
-//			    	System.out.print(",Before_tax_salary"+salvo.getBefore_tax_salary());
-//			    	System.out.print(",Local_income_tax"+salvo.getLocal_income_tax());
-//			    	System.out.print(",Health_insurance"+salvo.getHealth_insurance());
-//			    	System.out.print(",National_pension"+salvo.getNational_pension());
-//			    }
-//			    System.out.println(num1);
-//			    } catch (FindException e) {
-//				e.printStackTrace();
-//			}
+
 	}
 
 	 

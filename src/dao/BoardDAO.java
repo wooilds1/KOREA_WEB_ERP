@@ -15,15 +15,15 @@ public interface BoardDAO {
 	 * @return
 	 * @throws FindException
 	 */
-	int selectCount() throws FindException; // service에서는 getPageNum
+	int selectCount() throws FindException; // service에서는 selectPageNum
 	
 	/**
 	 * 글작성
 	 * @param b
 	 * @throws AddException
 	 */
-	void insert(Board b) throws AddException;
-	
+	//void insert(Board b) throws AddException;
+	void insert(String board_title, String board_content, String id) throws AddException;
 	/**
 	 * 해당 글 불러오기
 	 * @param no
@@ -44,8 +44,8 @@ public interface BoardDAO {
 	 * @param b
 	 * @throws ModifyException
 	 */
-	void update(Board b) throws ModifyException; 
-	
+	//void update(Board b) throws ModifyException; 
+	void update(String title, String content, int no) throws ModifyException;
 	/**
 	 * 글삭제하기
 	 * @param no
@@ -62,6 +62,7 @@ public interface BoardDAO {
 	 * @return
 	 * @throws FindException
 	 */
+	//List<Board> selectPage(int thispage, int cnt_per_page) throws FindException;
 	List<Board> selectPage(int thispage, int cnt_per_page) throws FindException;
-	
+
 }

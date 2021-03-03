@@ -1,0 +1,104 @@
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+        <!-- <script type="text/javascript" src="./ckeditor/ckeditor.js"></script> -->
+        <style>
+            /* 취소 등록버튼 오른쪽으로 보내기 */
+            section > article > form > div.buttons{
+                float: right;
+            }
+            
+        </style>
+
+        <script>
+
+            
+
+            $(function(){
+                    var pord_no = localStorage.getItem('pord_no');
+                    $.ajax({
+                    url:'./boardcontent',
+                    method:"get",
+                    data : {"pord_no": pord_no}, 
+                    success:function(responseObj){
+
+                        if(responseObj.status==undefined){
+
+                            $(".title").empty();
+                            var $divtitleObj=$('<div class=title>');
+                            var divData='제목';
+
+                            divData += '<input type="text" id="title" style="width:600px;" value="';
+                            divData += responseObj.board_title;
+                            divData += '">';
+                            divData += '</div><hr>내용';
+                            divData += '<div class="boardContent">';
+                            divData += '<textarea id="content" cols="100px" rows="25px" value="test" >';
+                            divData += responseObj.board_content;
+                            divData += '</textarea>';
+                            divData += '</div>'
+                            
+                            $divtitleObj.html(divData);
+                            $("section > article > form > div.boardContent").append($divtitleObj);
+
+                        }
+                    },
+                        error: function(jqXHR){ //실패응답
+                        alert("AJAX요청응답 실패 : 에러코드=" + jqXHR.status);
+                    }
+                });
+
+                $("input.uploadBoard").click(function(){
+
+                    var title=$("#title").val();
+                    var content=$("#content").val();
+
+                    $.ajax({
+                        url:'./boardmodify',
+                        method:"post",
+                        data:{"title":title,"content":content,"pord_no":pord_no},
+                        success:function(data){
+
+                            if(confirm("글을 수정하시겠습니까?")==true){
+                                $("section>article").empty();
+                                $("section>article").load("./board_content.html");
+                            }
+                        },
+                        error:function(jqXHR){
+                            alert("에러:" +jqXHR.status);
+                        }
+                    });
+                    return false;
+                });
+
+            //    2.취소 > 바로 게시판으로 이동ok
+                var $CancelObj=$("input[class=cancel]");
+                $CancelObj.click(function(event){
+                    if(confirm("현재 수정중인 글이 사라질 수 있습니다. 취소하시겠습니까?")==true){
+                        $("section>article").empty();
+                        $("section>article").load("./board.html");
+                    }
+                });
+
+            });
+
+        </script>
+    </head>
+        
+            <h1> 수정하기 </h1>
+            <form>
+                <div class="title">
+                </div>
+                <!-- div class boardContent 카멜케이스로 변경 -->
+                <div class="boardContent"> 
+                </div>
+                <hr>
+                <div class="buttons" >
+                    <input type="button" class="cancel" value="취소">  
+                    <input type="button" class="uploadBoard" value="수정">
+                </div>
+            </form>
+
+</html>

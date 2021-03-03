@@ -77,8 +77,9 @@ public class EmployeeDAOOracle implements EmployeeDAO {
 		            String office_tel = rs.getString("office_tel");
 		            AnnualLeave a = new AnnualLeave();
 		            Department d = new Department();
-		            a.used_day = used_day;
-		            a.max_day = max_day;
+		            a.setUsed_day(used_day);
+		            a.setMax_day(max_day);
+		            a.setEmp_id(id);
 		            d.setDept_id(dept_id); // 추가함
 		            d.setDept_name(dept_name);
 		            return new Employee(id,position,hire_date,
@@ -139,6 +140,7 @@ public class EmployeeDAOOracle implements EmployeeDAO {
 				flag = true;
 			}
 			if(flag) {
+				System.out.println(modifySQL+modifySQLSET+modifySQL1);
 				stmt.execute(modifySQL+modifySQLSET+modifySQL1);	
 				try {
 					return selectById(e.getEmp_id());
