@@ -80,11 +80,13 @@
                 }else{
                   endHours = d.getHours()+2
                 }
-                if(startHours == 24){
-                  startHours = '00';
+                if(startHours >= 24){
+                  startHours -= 24;
+                  startHours = '0' + startHours;
                 }
-                if(endHours == 24){
-                  endHours = '00';
+                if(endHours >= 24){
+                  endHours -= 24;
+                  endHours = '0' + endHours;
                 }
                 var str = d.getFullYear()+'-'+month+'-'+day;
                 $("input[name=newScheduleStartDate]").val(str);
@@ -292,11 +294,13 @@
             }else{
               endHours = d.getHours()+2
             }
-            if(startHours == 24){
-              startHours = '00';
+            if(startHours >= 24){
+              startHours -= 24;
+              startHours = '0' + startHours;
             }
-            if(endHours == 24){
-              endHours = '00';
+            if(endHours >= 24){
+              endHours -= 24;
+              endHours = '0' + endHours;
             }
             $("input[name=newScheduleStartDate]").val(info.dateStr);
             $("input[name=newScheduleStartTime]").val(startHours+":00");
@@ -337,11 +341,13 @@
             }else{
               endDate = info.end.getDate()-1;
             }
-            if(startHours == 24){
-              startHours = '00';
+            if(startHours >= 24){
+              startHours -= 24;
+              startHours = '0' + startHours;
             }
-            if(endHours == 24){
-              endHours = '00';
+            if(endHours >= 24){
+              endHours -= 24;
+              endHours = '0' + endHours;
             }
             var endString = info.end.getFullYear()+"-"+endMonth+"-"+endDate;
             $("input[name=newScheduleStartDate]").val(info.startStr);
