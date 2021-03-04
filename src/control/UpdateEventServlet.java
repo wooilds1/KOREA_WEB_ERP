@@ -110,19 +110,28 @@ public class UpdateEventServlet extends HttpServlet {
 			out.print(mapper.writeValueAsString(map));
 			return;
 		}
+		EmployeeScheduleService service = new EmployeeScheduleServiceImpl();
+		DepartmentScheduleService dservice = new DepartmentScheduleServiceImpl();
 		Department dept_vo = new Department(emp_vo.getD().getDept_id(), emp_vo.getD().getDept_name());
+		
 		EmployeeSchedule es = new EmployeeSchedule(scheduleNo, title, Istatus, StartDate, EndDate, Content, emp_vo);
 		DepartmentSchedule ds = new DepartmentSchedule(scheduleNo, title, StartDate, EndDate, Content, emp_vo, dept_vo);
 		List<Map<String, Object>> list = new ArrayList<>();
 		Map<String, Object> map = new HashMap<>();
-		EmployeeScheduleService service = new EmployeeScheduleServiceImpl();
-		DepartmentScheduleService dservice = new DepartmentScheduleServiceImpl();
+		EmployeeSchedule oldes = null;
+		try {
+			oldes = service.findByNo(scheduleNo);
+		} catch (FindException e2) {
+			e2.printStackTrace();
+			map.put("status", -1);
+			out.print(mapper.writeValueAsString(map));
+		}
 		try {
 			if(Istatus != 4) {
-				service.modify(es);
-				if(Istatus == 3 && es.getEmp_task_status() != Istatus) {
+				if(Istatus == 3 && oldes.getEmp_task_status() != Istatus) {
 					service.modifyAnnualLeave(emp_vo.getA(), use_day);
 				}
+				service.modify(es);
 			}else {
 				dservice.modify(ds);
 				map.put("dept_id", emp_vo.getD().getDept_id());

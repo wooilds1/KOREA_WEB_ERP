@@ -69,6 +69,7 @@ public class BoardContentServlet extends HttpServlet {
 			boardmap.put("board_content", b.getBoard_content());
 			boardmap.put("board_date", b.getBoard_date());
 			boardmap.put("emp_name",b.getEmp_vo().getName());
+			boardmap.put("emp_id",b.getEmp_vo().getEmp_id());
 			
 			for (BoardComment bc : list) {
 				Map<String,Object>commentmap=new HashMap<>();

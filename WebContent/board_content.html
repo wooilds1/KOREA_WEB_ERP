@@ -3,16 +3,9 @@
     <head>
     	<meta charset="UTF-8">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
-        <style>
-
-            section > article > div.buttons{
-                float: right;
-            }
-
-        </style>
 
 <script>  
-function showContent(pord_no){
+    function showContent(pord_no){
 
         $.ajax({
             url:'./boardcontent',
@@ -26,9 +19,16 @@ function showContent(pord_no){
                 if(responseObj.status==undefined){
                   
                     var $divDetailObj = $("div.board_detail");
-                   // var $divObj=$('<div class=board>');
+
                     var $divObj =  $divDetailObj.find("div.board");
                     var divData='<div class=boardTitle style="font-weight: bold; font-size:20px">';
+                    var b_id=responseObj.emp_id;
+                   
+                    if(b_id!=loginedId){
+                    $(".boardmodify").hide();
+                    $(".boarddelete").hide();
+                    }
+
                     divData+=responseObj.board_title;
                     divData+='</div>';
                     divData+='<div class="boardWriterDate" style="font-size: 80%; float: right; color: slategray;">';
@@ -98,7 +98,7 @@ function showContent(pord_no){
                             tableData += '<input type="button" class="commentsave" id="modifysave_';
                             tableData += element.cmt_no;
                             tableData += '" value="저장" style="display: none;">';
-                            tableData += '<input type="button" class="commentmodify"  value="수정">';
+                            tableData += '<input type="button" class="commentmodify"  value="수정" style="display:show">';
                             tableData += '<input type="button" class="commentdelete" value="삭제">';
                             tableData += '</td>';
                         }
@@ -142,24 +142,28 @@ function showContent(pord_no){
             
             var comValue=$("textarea[name=comment]").val();
             var board_no=$("#boardno").text();
-            console.log(comValue+"&&"+board_no);
+
+            if(comValue==""){
+                alert("댓글내용을 입력해주세요");
+            }else if(!(comValue=="")){
            
-            if(confirm("댓글을 등록하시겠습니까?")==true){
-                $.ajax({
-                    url:"./commentadd",
-                    method: "post",
-                    data:{"comment":comValue,"board_no":board_no},
-                    success:function(data) {
-                        // $("section>article").empty();
-                        // $("section>article").load("./board_content.html");
-                        showContent(pord_no);
-                       
-                    },
-                    error:function(jqXHR){
-                        alert("에러:" +jqXHR.status);
-                    }
-               
-                });
+                if(confirm("댓글을 등록하시겠습니까?")==true){
+                    $.ajax({
+                        url:"./commentadd",
+                        method: "post",
+                        data:{"comment":comValue,"board_no":board_no},
+                        success:function(data) {
+                            // $("section>article").empty();
+                            // $("section>article").load("./board_content.html");
+                            showContent(pord_no);
+                        
+                        },
+                        error:function(jqXHR){
+                            alert("에러:" +jqXHR.status);
+                        }
+                
+                    });
+                }
             }
 
             return false;
@@ -205,11 +209,12 @@ function showContent(pord_no){
     //4. 수정 클릭시 > 수정(ajax) /////////////////////////////////////////////////////////////////////////
 
         var $modifyObj=$("input[class=boardmodify]");
-            $modifyObj.click(function(){
+            
+        $modifyObj.click(function(){
             if(confirm("글을 수정하시겠습니까?")==true){
-            $("section>article").empty();
-            $("section>article").load("./board_modify.html");
-            return false;
+                $("section>article").empty();
+                $("section>article").load("./board_modify.html");
+                return false;
             }
 
         });
@@ -217,7 +222,7 @@ function showContent(pord_no){
 
     //5. 댓글수정클릭시 > 수정ajax> 해당댓글 반영하기 ok/////////////////////////////////////////
         $(document).on("click",".commentmodify",function(event){
-
+            
             var comment_no=$(this).parent().siblings(".commentno").text();
             var contentNum='#commentcontent_';
             contentNum+=comment_no;
@@ -227,27 +232,29 @@ function showContent(pord_no){
             var saveNum='#modifysave_';
             saveNum+=comment_no;
             $(saveNum).attr('style','display:show; ');
-            console.log(comment_no);
             return false;
         });
 
         $(document).on("click",".commentsave",function(event){
 
             var comment_no = $(this).parent().siblings(".commentno").text();
-            console.log(comment_no);
 
             var contentNum='#commentcontent_';
             contentNum+=comment_no;
             
             var contentNum1='commentcontent_';
             contentNum1+=comment_no;
-            console.log(contentNum1);
             var content_text=document.getElementById(contentNum1).value;
 
             var saveNum='#modifysave_';
             saveNum+=comment_no;
 
-            if(confirm("현재 댓글을 수정하시겠습니까?")==true){
+            ////저장버튼 활성화시 수정버튼 비활성화
+            // $("input.commentmodify").attr('style','display:hide;');
+            // // $("input.commentmodify").hide();
+
+
+                if(confirm("현재 댓글을 수정하시겠습니까?")==true){
                 $.ajax({
                     url:'./commentmodify',
                     method:'post',
@@ -265,6 +272,7 @@ function showContent(pord_no){
 
                 });
             } 
+
             return false;
         });
 
@@ -281,9 +289,7 @@ function showContent(pord_no){
                 data:{"comment_no":comment_no},
                 success:function(){
                     if(confirm("현재댓글을 삭제하시겠습니까?")==true){
-                    alert("댓글삭제-0");
                      showContent(pord_no);
-                     alert("댓글삭제-1");
                     }  
                 },
                 error:function(jqXHR){
@@ -297,11 +303,12 @@ function showContent(pord_no){
     });
     </script>
     </head>
-       <div class="board_detail"  style="display: none;;">
+       <div class="board_detail"  style="display: none; ">
+        <br><br>
             <h1> 공지사항 </h1>
-            
+            <br>
             <form name="form">
-                <div class="board">
+                <div class="board" style="width:680px; height: 80px;">
                 </div>
                 <br><br>
                 <hr>
@@ -320,9 +327,9 @@ function showContent(pord_no){
             </form>
                 <hr>
                 <div class="buttons">   
-                    <input type="button" class="boardmodify" value="수정" >
-                    <input type="button" class="boarddelete" value="삭제" >     
-                    <input type="button" class="backToList" value="글목록">
+                               <input type="button" class="boardmodify" value="수정" >
+                        <input type="button" class="boarddelete" value="삭제" >
+                        <input type="button" class="backToList" value="글목록">
                 </div>
        </div>
 </html>

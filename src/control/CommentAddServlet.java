@@ -21,7 +21,7 @@ public class CommentAddServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//System.out.println("CommentAddServlet-0");
+
 		BoardService service=new BoardServiceImpl();
 		PrintWriter out = response.getWriter();
 
@@ -36,11 +36,9 @@ public class CommentAddServlet extends HttpServlet {
 		
 		try {
 			service.addBoardComment(cmt_content,emp_id,board_no);
-			//System.out.println("CommentAddServlet-1");
+
 			out.print("{\"status\": 1}");
-//			String path = "./board_content.html";
-//			RequestDispatcher rd = request.getRequestDispatcher(path);
-//			rd.forward(request, response);
+
 		} catch (AddException e) {
 			e.printStackTrace();
 			out.print("{\"status\": -1, \"msg\": " + e.getMessage() + "}");

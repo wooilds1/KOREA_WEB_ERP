@@ -3,19 +3,11 @@
     <head>
         <meta charset="UTF-8">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
-        <!-- <script type="text/javascript" src="./ckeditor/ckeditor.js"></script> -->
         <style>
-            /* 취소 등록버튼 오른쪽으로 보내기 */
-            section > article > form > div.buttons{
-                float: right;
-            }
             
         </style>
 
         <script>
-
-            
-
             $(function(){
                     var pord_no = localStorage.getItem('pord_no');
                     $.ajax({
@@ -28,14 +20,14 @@
 
                             $(".title").empty();
                             var $divtitleObj=$('<div class=title>');
-                            var divData='제목';
+                            var divData='제목   ';
 
                             divData += '<input type="text" id="title" style="width:600px;" value="';
                             divData += responseObj.board_title;
                             divData += '">';
                             divData += '</div><hr>내용';
                             divData += '<div class="boardContent">';
-                            divData += '<textarea id="content" cols="100px" rows="25px" value="test" >';
+                            divData += '<textarea id="content" cols="80px" rows="20px"  value="test" >';
                             divData += responseObj.board_content;
                             divData += '</textarea>';
                             divData += '</div>'
@@ -86,12 +78,11 @@
 
         </script>
     </head>
-        
+            <br><br>
             <h1> 수정하기 </h1>
             <form>
                 <div class="title">
                 </div>
-                <!-- div class boardContent 카멜케이스로 변경 -->
                 <div class="boardContent"> 
                 </div>
                 <hr>

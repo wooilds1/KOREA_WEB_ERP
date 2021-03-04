@@ -44,7 +44,7 @@ public class BoardWriteServlet extends HttpServlet {
 			
 		} catch (AddException e) {
 			e.printStackTrace();
-			out.print("{\"status\": -1, \"msg\": " + e.getMessage() + "}");
+//			out.print("{\"status\": -1, \"msg\": " + e.getMessage() + "}");
 		}
 		}
 

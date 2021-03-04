@@ -1,7 +1,6 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <!-- 부트스트랩 CDN <head>안쪽 <meta charset="UTF-8">뒤에  넣어주세요 위쪽에 넣어줘야 적용이 됨 -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <!-- css링크 -->
         <link rel="stylesheet" type="text/css" href="./logincss.css">
@@ -34,20 +33,19 @@
                         let arr = responseObj.list; //responseObj.list의 내용을 arr에 담는다
                         
                         $(arr).each(function(index, element){ // db에 있는 게시글의 수 만큼 arr를 반복해서 저장된 데이터를 보여준다
-                            //console.log("게시글번호:"+ element.board_no +"게시글제목" + element.board_title +"작성자:"+ element.emp_id +"작성일 :"+element.board_date);
                         
                             tableData += '<tr>'; //tr 추가
                         
                             tableData += '<td scope="row" class="board_no">'; //td추가
                             tableData += element.board_no; //td 내용 추가
                             tableData += '</td>'; //td닫기추가
-                    
+
                             tableData += '<td scope="row" class="boardTitle" style="curosor=pointer">'; //td추가
                             tableData += element.board_title; //td 내용 추가
                             tableData += '</td>'; //td닫기추가
-                        
-                            tableData += '<td scope="row">'; //td추가
-                            tableData += element.emp_id; //td 내용 추가
+                    
+                            tableData += '<td scope="row" style="curosor=pointer">'; //td추가
+                            tableData += element.name;
                             tableData += '</td>'; //td닫기추가
                         
                             tableData += '<td scope="row">'; //td추가
@@ -88,7 +86,6 @@
                         }else{ //endPage가 totalPage보다 작지 않다면
                             $minsungClone.find("ul.pagination>li.next").addClass("disabled"); //$minsungClone객체에서 ul.pagination안쪽에 li.next를 찾아서 li.next안에 "disabled"클래스를 추가하낟
                         }
-                        //%minsungClone객체의 숨겨진 요소들을 나타나게한다
                         $minsungClone.show();
                     }, //success 끝
                     error:function(jqXHR){
@@ -106,22 +103,8 @@
             //글쓰기버튼클릭
             $('#boardAritcle').on('click','#putcomment',function(event){
                 pord_no = $(this).siblings(".board_no").text();
-                // var url = "./board_write.html";
                 $('#boardAritcle').empty();
                 $('#boardAritcle').load("./board_write.html");
-                // $.ajax({
-                //     url : url, //요청 url 
-                //     method: "get", //요청방식
-                //     dataType : "html",
-                //     success: function(url){
-                //        
-                //     },
-            
-                //     error: function(jqXHR){
-                //         alert("오류: " + jqXHR.status)
-                //     }
-                 
-                // }); //ajax 끝
         
             });
             
@@ -161,14 +144,14 @@
             });
             //--페이지번호가 클릭 끝--
         
-        });//$(function)
+        });
         
     </script>
 </head>   
 
     <body>
         <section>
-            <article id="boardAritcle"> 
+            <article id="boardAritcle" style="margin: 50px;"> 
             </article>
         </section>
         

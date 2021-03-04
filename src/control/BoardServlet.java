@@ -36,10 +36,8 @@ public class BoardServlet extends HttpServlet {
 		//BoardService 타입의 service 객체얻기
 		BoardService service = new BoardServiceImpl();
 		
-		
 		//게시판리스트얻기
 		List<Board> boardList; //게시글의 내용들
-		
 		
 		try {
 
@@ -67,28 +65,27 @@ public class BoardServlet extends HttpServlet {
 				endPage = totalPage;
 			}
 		
-		//기본적으로 보여줄 페이지
+			//기본적으로 보여줄 페이지
 			try {
-				boardList = service.findBoardPage(thisPage, cnt_per_pagegroup);
-				//System.out.println(boardList);
+				boardList = service.findBoardPage(thisPage, cnt_per_page); //페이징 1페이지당 10개씩
 				
 				//jackson 라이브러리 사용해서 map의 내용을 json형태로 응답하기
 				ObjectMapper mapper = new ObjectMapper(); //jackson 라이브러리 mapper 객체 생성
 				List<Map<String, Object>> list = new ArrayList<Map<String,Object>>(); 
-				
-				
-				
+
 				for (Board b : boardList) {
 					Map<String, Object> map1 = new HashMap<String, Object>();
 					map1.put("board_no", b.getBoard_no());
 					map1.put("board_title", b.getBoard_title());
-				
+	  			
 					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 					String dateFormatStringTime =dateFormat.format(b.getBoard_date());
 					
 					map1.put("emp_id", b.getEmp_vo().getEmp_id());
+					map1.put("name", b.getEmp_vo().getName());
 					map1.put("board_date", dateFormatStringTime ); //그냥 b.getboard_date를 하면 날짜가 제대로 출력안되니 simpleDateFormat로 포맷해줘야한다
 					list.add(map1);
+
 				}
 				
 				
@@ -100,8 +97,7 @@ public class BoardServlet extends HttpServlet {
 				map2.put("list", list);
 				
 				out.print(mapper.writeValueAsString(map2));
-				//System.out.println(list);
-		
+				
 			} catch (FindException e) {//boardList = service.findBoardPaging() 끝
 	 
 				e.printStackTrace();

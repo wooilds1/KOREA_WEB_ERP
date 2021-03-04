@@ -43,9 +43,6 @@ public class BoardModifyServelt extends HttpServlet {
 
 				if(!b.getBoard_content().equals(modifycontent) && !b.getBoard_title().equals(modifytitle)) {
 					service.modifyBoard(modifytitle, modifycontent, pord_no);
-//					String path = "./board.html";
-//					RequestDispatcher rd = request.getRequestDispatcher(path);
-//					rd.forward(request, response);
 				}
 			} catch (ModifyException | FindException e) {
 				e.printStackTrace();
